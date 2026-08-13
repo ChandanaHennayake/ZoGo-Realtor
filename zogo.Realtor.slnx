@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/zogo.API/zogo.API.csproj" />
+    <Project Path="src/zogo.Application/zogo.Application.csproj" />
+    <Project Path="src/zogo.Domain/zogo.Domain.csproj" />
+    <Project Path="src/zogo.Infrastructure/zogo.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/zogo.IntegrationTests/zogo.IntegrationTests.csproj" />
+    <Project Path="tests/zogo.UnitTests/zogo.UnitTests.csproj" />
+  </Folder>
+</Solution>
