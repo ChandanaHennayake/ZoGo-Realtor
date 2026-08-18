@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Docs/">
+    <File Path="Structure.txt" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/zogo.API/zogo.API.csproj" />
     <Project Path="src/zogo.Application/zogo.Application.csproj" />

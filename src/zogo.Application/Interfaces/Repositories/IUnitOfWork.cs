@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace zogo.Application.Interfaces.Repositories;
 
-namespace zogo.Application.Interfaces.Repositories
+public interface IUnitOfWork
 {
-    internal interface IUnitOfWork
-    {
-    }
+    Task<int> SaveChangesAsync(
+        CancellationToken cancellationToken = default);
 }

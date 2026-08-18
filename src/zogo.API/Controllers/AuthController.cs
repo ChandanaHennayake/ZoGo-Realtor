@@ -1,11 +1,52 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using zogo.Application.DTOs.Authentication;
+using zogo.Application.Interfaces.Services;
 
-namespace zogo.API.Controllers
+namespace zogo.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public sealed class AuthController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly IAuthenticationService _authenticationService;
+
+    public AuthController(
+        IAuthenticationService authenticationService)
     {
+        _authenticationService = authenticationService;
+    }
+
+    [HttpPost("register")]
+    [ProducesResponseType(
+        typeof(RegisterResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(
+        StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<RegisterResponse>> Register(
+        [FromBody] RegisterRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result =
+            await _authenticationService.RegisterAsync(
+                request,
+                cancellationToken);
+
+        return Ok(result);
+    }
+
+
+    [HttpPost("google")]
+    public async Task<ActionResult<AuthenticationResponse>> GoogleLogin(
+        [FromBody] GoogleLoginRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response =
+            await _authenticationService.GoogleLoginAsync(
+                request,
+                cancellationToken);
+
+        return Ok(response);
     }
 }

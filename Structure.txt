@@ -1,0 +1,264 @@
+ZoGo
+│
+├── zogo.API
+│   │
+│   ├── Connected Services
+│   ├── Dependencies
+│   │
+│   ├── Properties
+│   │
+│   ├── Configuration
+│   │   ├── SwaggerConfiguration.cs
+│   │   ├── JwtConfiguration.cs
+│   │   └── ...
+│   │
+│   ├── Controllers
+│   │   ├── ApiControllerBase.cs
+│   │   ├── AuthController.cs
+│   │   ├── UsersController.cs
+│   │   │
+│   │   ├── PropertiesController.cs
+│   │   ├── PropertySearchController.cs
+│   │   ├── FavoritesController.cs
+│   │   ├── InquiriesController.cs
+│   │   ├── VisitsController.cs
+│   │   ├── OffersController.cs
+│   │   └── ...
+│   │
+│   ├── Extensions
+│   │   ├── AuthenticationExtensions.cs
+│   │   ├── ServiceCollectionExtensions.cs
+│   │   └── ApplicationBuilderExtensions.cs
+│   │
+│   ├── Middleware
+│   │   ├── ExceptionHandlingMiddleware.cs
+│   │   ├── RequestLoggingMiddleware.cs
+│   │   └── ...
+│   │
+│   ├── appsettings.json
+│   ├── appsettings.Development.json
+│   ├── Program.cs
+│   └── zogo.API.http
+│
+│
+├── zogo.Application
+│   │
+│   ├── Common
+│   │   ├── Constants
+│   │   ├── Models
+│   │   ├── Results
+│   │   └── ...
+│   │
+│   ├── DTOs
+│   │   │
+│   │   ├── Authentication
+│   │   │   ├── RegisterRequest.cs
+│   │   │   ├── RegisterResponse.cs
+│   │   │   ├── LoginRequest.cs
+│   │   │   ├── LoginResponse.cs
+│   │   │   ├── GoogleLoginRequest.cs
+│   │   │   ├── RefreshTokenRequest.cs
+│   │   │   ├── RefreshTokenResponse.cs
+│   │   │   ├── LogoutRequest.cs
+│   │   │   ├── ChangePasswordRequest.cs
+│   │   │   ├── ForgotPasswordRequest.cs
+│   │   │   ├── ResetPasswordRequest.cs
+│   │   │   ├── VerifyEmailRequest.cs
+│   │   │   └── UserResponse.cs
+│   │   │
+│   │   ├── Users
+│   │   │   ├── UserResponse.cs
+│   │   │   ├── UpdateUserRequest.cs
+│   │   │   └── ...
+│   │   │
+│   │   ├── Properties
+│   │   │   ├── CreatePropertyRequest.cs
+│   │   │   ├── UpdatePropertyRequest.cs
+│   │   │   ├── PropertyResponse.cs
+│   │   │   └── ...
+│   │   │
+│   │   ├── Favorites
+│   │   ├── Inquiries
+│   │   ├── Visits
+│   │   ├── Offers
+│   │   └── ...
+│   │
+│   ├── Exceptions
+│   │   ├── ApplicationException.cs
+│   │   ├── NotFoundException.cs
+│   │   └── ValidationException.cs
+│   │
+│   ├── Interfaces
+│   │   │
+│   │   ├── Repositories
+│   │   │   ├── IUserRepository.cs
+│   │   │   ├── IRoleRepository.cs
+│   │   │   ├── IUserRoleRepository.cs
+│   │   │   ├── IUserAuthenticationProviderRepository.cs
+│   │   │   ├── IRefreshTokenRepository.cs
+│   │   │   ├── IPasswordResetRepository.cs
+│   │   │   ├── IDeviceTokenRepository.cs
+│   │   │   └── IUnitOfWork.cs
+│   │   │
+│   │   └── Services
+│   │       ├── IAuthenticationService.cs
+│   │       ├── IGoogleAuthenticationService.cs
+│   │       ├── IJwtTokenService.cs
+│   │       ├── IPasswordService.cs
+│   │       └── ...
+│   │
+│   ├── Services
+│   │   │
+│   │   ├── Authentication
+│   │   │   ├── AuthenticationService.cs
+│   │   │   └── GoogleAuthenticationService.cs
+│   │   │
+│   │   ├── Users
+│   │   │   └── UserService.cs
+│   │   │
+│   │   ├── Properties
+│   │   │   └── PropertyService.cs
+│   │   │
+│   │   ├── Favorites
+│   │   │   └── FavoriteService.cs
+│   │   │
+│   │   ├── Inquiries
+│   │   │   └── InquiryService.cs
+│   │   │
+│   │   ├── Visits
+│   │   │   └── VisitService.cs
+│   │   │
+│   │   ├── Offers
+│   │   │   └── OfferService.cs
+│   │   │
+│   │   └── ...
+│   │
+│   ├── Validators
+│   │   │
+│   │   ├── Authentication
+│   │   │   ├── LoginRequestValidator.cs
+│   │   │   ├── RegisterRequestValidator.cs
+│   │   │   ├── GoogleLoginRequestValidator.cs
+│   │   │   ├── RefreshTokenRequestValidator.cs
+│   │   │   ├── ChangePasswordRequestValidator.cs
+│   │   │   ├── ForgotPasswordRequestValidator.cs
+│   │   │   └── ResetPasswordRequestValidator.cs
+│   │   │
+│   │   ├── Users
+│   │   ├── Properties
+│   │   └── ...
+│   │
+│   └── DependencyInjection.cs
+│
+│
+├── zogo.Domain
+│   │
+│   ├── Entities
+│   │   │
+│   │   ├── Identity
+│   │   │   ├── User.cs
+│   │   │   ├── UserAuthenticationProvider.cs
+│   │   │   ├── Role.cs
+│   │   │   ├── UserRole.cs
+│   │   │   ├── RefreshToken.cs
+│   │   │   ├── PasswordReset.cs
+│   │   │   └── DeviceToken.cs
+│   │   │
+│   │   ├── Properties
+│   │   │   ├── Property.cs
+│   │   │   ├── PropertyImage.cs
+│   │   │   ├── PropertyLocation.cs
+│   │   │   └── ...
+│   │   │
+│   │   ├── Favorites
+│   │   ├── Inquiries
+│   │   ├── Visits
+│   │   ├── Offers
+│   │   └── ...
+│   │
+│   ├── Enums
+│   │   ├── AuthenticationProvider.cs
+│   │   ├── DevicePlatform.cs
+│   │   ├── UserStatus.cs
+│   │   ├── PropertyType.cs
+│   │   ├── ListingType.cs
+│   │   ├── PropertyStatus.cs
+│   │   ├── InquiryStatus.cs
+│   │   ├── VisitStatus.cs
+│   │   ├── OfferStatus.cs
+│   │   └── ...
+│   │
+│   └── Exceptions
+│       ├── DomainException.cs
+│       ├── InvalidCredentialsException.cs
+│       ├── UserAlreadyExistsException.cs
+│       ├── UserInactiveException.cs
+│       └── ...
+│
+│
+└── zogo.Infrastructure
+    │
+    ├── Auth
+    │   ├── JwtOptions.cs
+    │   ├── JwtTokenService.cs
+    │   ├── PasswordService.cs
+    │   │
+    │   └── Google
+    │       ├── GoogleOptions.cs
+    │       └── GoogleAuthenticationService.cs
+    │
+    ├── Persistence
+    │   │
+    │   ├── Configurations
+    │   │   │
+    │   │   ├── Identity
+    │   │   │   ├── UserConfiguration.cs
+    │   │   │   ├── UserAuthenticationProviderConfiguration.cs
+    │   │   │   ├── RoleConfiguration.cs
+    │   │   │   ├── UserRoleConfiguration.cs
+    │   │   │   ├── RefreshTokenConfiguration.cs
+    │   │   │   ├── PasswordResetConfiguration.cs
+    │   │   │   └── DeviceTokenConfiguration.cs
+    │   │   │
+    │   │   ├── Properties
+    │   │   │   ├── PropertyConfiguration.cs
+    │   │   │   ├── PropertyImageConfiguration.cs
+    │   │   │   └── ...
+    │   │   │
+    │   │   └── ...
+    │   │
+    │   ├── Interceptors
+    │   │   ├── AuditableEntityInterceptor.cs
+    │   │   └── ...
+    │   │
+    │   ├── Repositories
+    │   │   │
+    │   │   ├── UserRepository.cs
+    │   │   ├── RoleRepository.cs
+    │   │   ├── UserRoleRepository.cs
+    │   │   ├── UserAuthenticationProviderRepository.cs
+    │   │   ├── RefreshTokenRepository.cs
+    │   │   ├── PasswordResetRepository.cs
+    │   │   ├── DeviceTokenRepository.cs
+    │   │   ├── UnitOfWork.cs
+    │   │   │
+    │   │   ├── Properties
+    │   │   │   └── PropertyRepository.cs
+    │   │   │
+    │   │   └── ...
+    │   │
+    │   └── ApplicationDbContext.cs
+    │
+    ├── Services
+    │   ├── Email
+    │   │   ├── EmailService.cs
+    │   │   └── EmailOptions.cs
+    │   │
+    │   ├── Storage
+    │   │   ├── FileStorageService.cs
+    │   │   └── StorageOptions.cs
+    │   │
+    │   └── Notifications
+    │       └── NotificationService.cs
+    │
+    └── DependencyInjection.cs
