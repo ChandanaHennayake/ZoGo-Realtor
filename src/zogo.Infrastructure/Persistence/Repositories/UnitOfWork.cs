@@ -1,10 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using zogo.Application.Interfaces.Repositories;
 
-namespace zogo.Infrastructure.Persistence.Repositories
+namespace zogo.Infrastructure.Persistence.Repositories;
+
+public sealed class UnitOfWork : IUnitOfWork
 {
-    internal class UnitOfWork
+    private readonly ApplicationDbContext _context;
+
+    public UnitOfWork(ApplicationDbContext context)
     {
+        _context = context;
+    }
+
+    public Task<int> SaveChangesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return _context.SaveChangesAsync(cancellationToken);
     }
 }

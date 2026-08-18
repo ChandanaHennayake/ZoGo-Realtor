@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace zogo.Application.Interfaces.Services;
 
-namespace zogo.Application.Interfaces.Services
+public interface IPasswordService
 {
-    internal interface IPasswordService
-    {
-    }
+    string HashPassword(string password);
+
+    bool VerifyPassword(
+        string password,
+        string passwordHash);
 }

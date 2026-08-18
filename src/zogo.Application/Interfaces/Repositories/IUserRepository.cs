@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using zogo.Domain.Entities.Identity;
 
-namespace zogo.Application.Interfaces.Repositories
+namespace zogo.Application.Interfaces.Repositories;
+
+public interface IUserRepository
 {
-    internal interface IUserRepository
-    {
-    }
+    Task<User?> GetByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default);
+
+    Task AddAsync(
+        User user,
+        CancellationToken cancellationToken = default);
 }

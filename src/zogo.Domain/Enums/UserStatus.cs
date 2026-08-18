@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace zogo.Domain.Enums;
 
-namespace zogo.Domain.Enums
+public enum UserStatus : short
 {
-    internal class UserStatus
-    {
-    }
+    Active = 1,
+    Inactive = 2
 }

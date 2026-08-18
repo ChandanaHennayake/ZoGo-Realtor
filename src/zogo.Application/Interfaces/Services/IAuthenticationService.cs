@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using zogo.Application.DTOs.Authentication;
 
-namespace zogo.Application.Interfaces.Services
+namespace zogo.Application.Interfaces.Services;
+
+public interface IAuthenticationService
 {
-    internal interface IAuthenticationService
-    {
-    }
+    Task<RegisterResponse> RegisterAsync(
+        RegisterRequest request,
+        CancellationToken cancellationToken = default);
+
+    Task<AuthenticationResponse> GoogleLoginAsync(
+    GoogleLoginRequest request,
+    CancellationToken cancellationToken = default);
 }

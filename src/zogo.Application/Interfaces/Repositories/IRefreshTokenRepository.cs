@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using zogo.Domain.Entities.Identity;
 
-namespace zogo.Application.Interfaces.Repositories
+namespace zogo.Application.Interfaces.Repositories;
+
+public interface IRefreshTokenRepository
 {
-    internal interface IRefreshTokenRepository
-    {
-    }
+    Task AddAsync(
+        RefreshToken refreshToken,
+        CancellationToken cancellationToken = default);
+
+    Task<RefreshToken?> GetByTokenHashAsync(
+        string tokenHash,
+        CancellationToken cancellationToken = default);
+
+    Task RevokeAsync(
+        RefreshToken refreshToken,
+        CancellationToken cancellationToken = default);
 }

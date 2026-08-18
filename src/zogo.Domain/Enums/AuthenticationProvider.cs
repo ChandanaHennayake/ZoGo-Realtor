@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace zogo.Domain.Enums;
 
-namespace zogo.Domain.Enums
+public enum AuthenticationProvider : short
 {
-    internal class AuthenticationProvider
-    {
-    }
+    Local = 1,
+    Google = 2
 }

@@ -1,14 +1,18 @@
-using System.Reflection;
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using zogo.Application.Interfaces.Services;
+using zogo.Application.Services.Authentication;
 
 namespace zogo.Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static IServiceCollection AddApplication(
+        this IServiceCollection services)
     {
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddScoped<
+            IAuthenticationService,
+            AuthenticationService>();
+
         return services;
     }
 }
