@@ -8,6 +8,12 @@ public interface IUserRepository
         string email,
         CancellationToken cancellationToken = default);
 
+
+    Task<UserAuthenticationProvider?> GetLocalProviderAsync(
+     Guid userId,
+     CancellationToken cancellationToken = default);
+
+
     Task AddAsync(
         User user,
         CancellationToken cancellationToken = default);

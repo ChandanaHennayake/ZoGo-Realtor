@@ -36,6 +36,21 @@ public sealed class AuthController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("login")]
+    [ProducesResponseType(typeof(AuthenticationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<AuthenticationResponse>> Login(
+     [FromBody] LoginRequest request,
+     CancellationToken cancellationToken)
+    {
+        var response =
+            await _authenticationService.LoginAsync(
+                request,
+                cancellationToken);
+
+        return Ok(response);
+    }
+
 
     [HttpPost("google")]
     public async Task<ActionResult<AuthenticationResponse>> GoogleLogin(

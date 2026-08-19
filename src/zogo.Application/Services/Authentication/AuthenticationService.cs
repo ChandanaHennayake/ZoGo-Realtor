@@ -7,7 +7,7 @@ namespace zogo.Application.Services.Authentication;
 
 public sealed class AuthenticationService : IAuthenticationService
 {
-    private const string DefaultRoleCode = "BUYER";
+    private const string DefaultRoleCode = "BYR";
 
     private readonly IUserRepository _userRepository;
     private readonly IRoleRepository _roleRepository;
@@ -117,6 +117,137 @@ public sealed class AuthenticationService : IAuthenticationService
             Email = user.Email
         };
     }
+
+
+
+    public async Task<AuthenticationResponse> LoginAsync(
+    LoginRequest request,
+    CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var email = request.Email
+            .Trim()
+            .ToLowerInvariant();
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException(
+                "Email is required.",
+                nameof(request));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            throw new ArgumentException(
+                "Password is required.",
+                nameof(request));
+        }
+
+        // 1. Find user
+        var user =
+            await _userRepository.GetByEmailAsync(
+                email,
+                cancellationToken);
+
+        if (user is null)
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid email or password.");
+        }
+
+        // 2. Check user status
+        if (user.DeletedAt is not null)
+        {
+            throw new UnauthorizedAccessException(
+                "This account is no longer available.");
+        }
+
+        // 3. Get LOCAL authentication provider
+        var localProvider =
+            await _userRepository.GetLocalProviderAsync(
+                user.Id,
+                cancellationToken);
+
+        if (localProvider is null)
+        {
+            throw new UnauthorizedAccessException(
+                "This account does not have local password authentication.");
+        }
+
+        // 4. Check password hash
+        if (string.IsNullOrWhiteSpace(localProvider.PasswordHash))
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid email or password.");
+        }
+
+        // 5. Verify password
+        var passwordValid =
+            _passwordService.VerifyPassword(
+                request.Password,
+                localProvider.PasswordHash);
+
+        if (!passwordValid)
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid email or password.");
+        }
+
+        // 6. Get user roles
+        var roles = user.UserRoles
+            .Where(x => x.Role is not null)
+            .Select(x => x.Role.Code)
+            .ToList();
+
+        // 7. Generate access token
+        var accessToken =
+            _jwtTokenService.GenerateAccessToken(
+                user.Id,
+                user.Email,
+                roles);
+
+        var accessTokenExpiresAt =
+            _jwtTokenService.GetAccessTokenExpiration();
+
+        // 8. Generate refresh token
+        var refreshToken =
+            _jwtTokenService.GenerateRefreshToken();
+
+        // 9. Hash refresh token before storing
+        var refreshTokenHash =
+            _jwtTokenService.HashRefreshToken(
+                refreshToken);
+
+        // 10. Create refresh token entity
+        var refreshTokenEntity =
+            RefreshToken.Create(
+                user.Id,
+                refreshTokenHash,
+                DateTimeOffset.UtcNow.AddDays(30));
+
+        // 11. Save refresh token
+        await _refreshTokenRepository.AddAsync(
+            refreshTokenEntity,
+            cancellationToken);
+
+        await _unitOfWork.SaveChangesAsync(
+            cancellationToken);
+
+        // 12. Return response
+        return new AuthenticationResponse
+        {
+            UserId = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+            AccessTokenExpiresAt = accessTokenExpiresAt,
+            Roles = roles
+        };
+    }
+
 
     public async Task<AuthenticationResponse> GoogleLoginAsync(
         GoogleLoginRequest request,
