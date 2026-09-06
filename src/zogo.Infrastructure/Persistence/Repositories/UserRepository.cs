@@ -50,4 +50,29 @@ public sealed class UserRepository : IUserRepository
             user,
             cancellationToken);
     }
+
+    public async Task AddRoleAsync(
+    UserRole userRole,
+    CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(userRole);
+
+        await _context.UserRoles.AddAsync(
+            userRole,
+            cancellationToken);
+    }
+
+    public async Task<User?> GetByIdAsync(
+    Guid userId,
+    CancellationToken cancellationToken = default)
+    {
+        return await _context.Users
+            .Include(x => x.UserRoles)
+                .ThenInclude(x => x.Role)
+            .FirstOrDefaultAsync(
+                x =>
+                    x.Id == userId &&
+                    x.DeletedAt == null,
+                cancellationToken);
+    }
 }

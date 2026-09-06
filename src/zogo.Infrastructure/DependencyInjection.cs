@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
+using zogo.Application.Services;
 using zogo.Infrastructure.Auth;
 using zogo.Infrastructure.Persistence;
 using zogo.Infrastructure.Persistence.Repositories;
@@ -43,6 +44,11 @@ public static class DependencyInjection
     configuration.GetSection(JwtOptions.SectionName));
 
         services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+
+        services.AddScoped<
+    IPropertyRepository,
+    PropertyRepository>();
 
         services.AddScoped<
             IRefreshTokenRepository,

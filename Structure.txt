@@ -262,3 +262,16 @@ ZoGo
     │       └── NotificationService.cs
     │
     └── DependencyInjection.cs
+
+
+
+
+
+    dotnet run --project "C:\New folder (2)\ZOGO\RealEstate\src\zogo.API\zogo.API.csproj" --urls "http://0.0.0.0:5000"
+
+
+      "firstName": "shaveen",
+  "lastName": "hennayake",
+  "email": "ravihennayaka667@gmail.com",
+  "phoneNumber": "0740624743",
+  "password": "123abc"
