@@ -8,4 +8,21 @@ public interface IPropertyService
         Guid userId,
         CreatePropertyRequest request,
         CancellationToken cancellationToken = default);
+
+
+
+    Task<GetPropertyResponse?> GetByIdAsync(
+        Guid propertyId,
+        CancellationToken cancellationToken = default);
+
+
+    Task<IReadOnlyList<GetPropertyResponse>> GetMyPropertiesAsync(
+    Guid userId,
+    CancellationToken cancellationToken = default);
+
+    Task<bool> UpdateAsync(
+    Guid userId,
+    Guid propertyId,
+    UpdatePropertyRequest request,
+    CancellationToken cancellationToken = default);
 }

@@ -38,6 +38,17 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<PropertyType> PropertyTypes => Set<PropertyType>();
     public DbSet<ListingType> ListingTypes => Set<ListingType>();
 
+    public DbSet<Condominium> Condominiums => Set<Condominium>();
+    public DbSet<ApartmentType> ApartmentTypes => Set<ApartmentType>();
+    public DbSet<FurnishingType> FurnishingTypes => Set<FurnishingType>();
+
+    public DbSet<ApartmentDetails> ApartmentDetails => Set<ApartmentDetails>();
+
+    public DbSet<PropertyFinancials> PropertyFinancials => Set<PropertyFinancials>();
+    public DbSet<PropertyLegalDetails> PropertyLegalDetails => Set<PropertyLegalDetails>();
+
+
+
 
 
     protected override void OnModelCreating(

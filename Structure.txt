@@ -270,8 +270,102 @@ ZoGo
     dotnet run --project "C:\New folder (2)\ZOGO\RealEstate\src\zogo.API\zogo.API.csproj" --urls "http://0.0.0.0:5000"
 
 
-      "firstName": "shaveen",
-  "lastName": "hennayake",
-  "email": "ravihennayaka667@gmail.com",
-  "phoneNumber": "0740624743",
-  "password": "123abc"
+    =====================================================================================================================================================
+
+    seller property lsiting 
+
+    =====================================================================================================================================================
+
+                             ┌──────────────────┐
+                         │   USER LOGIN     │
+                         │   BYR + SEL      │
+                         └────────┬─────────┘
+                                  │
+                                  ▼
+                    ┌─────────────────────────┐
+                    │   CREATE PROPERTY       │
+                    │   POST /properties      │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │         DRAFT            │
+                    │       Status = 1         │
+                    └────────────┬────────────┘
+                                 │
+             ┌───────────────────┼───────────────────┐
+             │                   │                   │
+             ▼                   ▼                   ▼
+      Edit Property        Add Details         Add Media
+      PUT /properties      Financials           Photos
+                           Legal Details         Videos
+                           Features
+                           Amenities
+                           Documents
+             │                   │                   │
+             └───────────────────┼───────────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │    SELLER SUBMITS       │
+                    │       Status = 2         │
+                    │       SUBMITTED          │
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │      ADMIN REVIEW       │
+                    │    Status = 3            │
+                    │    UNDER_REVIEW          │
+                    └────────────┬────────────┘
+                                 │
+                    ┌────────────┴────────────┐
+                    │                         │
+                    ▼                         ▼
+          ┌──────────────────┐      ┌─────────────────────┐
+          │     APPROVED     │      │ CHANGES_REQUESTED  │
+          │    Status = 5    │      │     Status = 4      │
+          └────────┬─────────┘      └──────────┬──────────┘
+                   │                           │
+                   │                           ▼
+                   │                    Seller edits
+                   │                           │
+                   │                           ▼
+                   │                       SUBMITTED
+                   │
+                   ▼
+          ┌──────────────────┐
+          │    PUBLISHED     │
+          │    Status = 6    │
+          └────────┬─────────┘
+                   │
+                   ▼
+          ┌──────────────────┐
+          │ BUYERS CAN VIEW  │
+          │    PROPERTY      │
+          └────────┬─────────┘
+                   │
+        ┌──────────┼──────────┐
+        │          │          │
+        ▼          ▼          ▼
+     Favorite   Interest    Visit
+        │          │          │
+        └──────────┼──────────┘
+                   │
+                   ▼
+              Negotiation
+                   │
+                   ▼
+                 Offer
+                   │
+          ┌────────┴────────┐
+          │                 │
+          ▼                 ▼
+       REJECTED          ACCEPTED
+                           │
+                           ▼
+                       TRANSACTION
+                           │
+                           ▼
+                         SOLD
+                      Status = 8

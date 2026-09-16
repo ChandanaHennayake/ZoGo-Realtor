@@ -1,12 +1,7 @@
 ﻿namespace zogo.Application.DTOs.Properties;
 
-public sealed class GetPropertyResponse
+public sealed class UpdatePropertyRequest
 {
-    public Guid PropertyId { get; set; }
-    public string ReferenceNo { get; set; } = null!;
-
-    public Guid OwnerUserId { get; set; }
-
     public short PropertyTypeId { get; set; }
     public short ListingTypeId { get; set; }
 
@@ -27,15 +22,4 @@ public sealed class GetPropertyResponse
 
     public decimal AskingPrice { get; set; }
     public bool IsNegotiable { get; set; }
-
-    public short Status { get; set; }
-
-    public DateTime? PublishedAt { get; set; }
-    public DateTime? SoldAt { get; set; }
-
-    public Guid CreatedBy { get; set; }
-    public DateTime CreatedAt { get; set; }
-
-    public Guid? UpdatedBy { get; set; }
-    public DateTime? UpdatedAt { get; set; }
 }

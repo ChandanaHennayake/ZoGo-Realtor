@@ -36,4 +36,18 @@ public sealed class PropertyRepository : IPropertyRepository
                     x.DeletedAt == null,
                 cancellationToken);
     }
+
+
+    public async Task<IReadOnlyList<Property>> GetByOwnerUserIdAsync(
+    Guid ownerUserId,
+    CancellationToken cancellationToken = default)
+    {
+        return await _context.Properties
+            .AsNoTracking()
+            .Where(x =>
+                x.OwnerUserId == ownerUserId &&
+                x.DeletedAt == null)
+            .OrderByDescending(x => x.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
 }

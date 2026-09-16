@@ -2,19 +2,18 @@
 
 namespace zogo.Application.Interfaces.Repositories;
 
-public interface IPropertyRepository
+public interface IPropertyLegalDetailsRepository
 {
     Task AddAsync(
-        Property property,
+        PropertyLegalDetails legalDetails,
         CancellationToken cancellationToken = default);
 
-    Task<Property?> GetByIdAsync(
+    Task<PropertyLegalDetails?> GetByPropertyIdAsync(
         Guid propertyId,
         CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<Property>> GetByOwnerUserIdAsync(
-    Guid ownerUserId,
-    CancellationToken cancellationToken = default);
-
+    Task<bool> ExistsAsync(
+        Guid propertyId,
+        CancellationToken cancellationToken = default);
 
 }
