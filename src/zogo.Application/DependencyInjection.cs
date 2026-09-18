@@ -19,6 +19,11 @@ public static class DependencyInjection
 
         services.AddScoped<IPropertyLegalDetailsService, PropertyLegalDetailsService>();
 
+        services.AddScoped<IPropertyFeatureService, PropertyFeatureService>();
+
+        services.AddScoped<IPropertyAmenityService, PropertyAmenityService>();
+
+      
         return services;
     }
 }

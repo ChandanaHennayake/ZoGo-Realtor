@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Domain.Entities.Identity;
+using zogo.Domain.Entities.Master;
 using zogo.Domain.Entities.Property;
 
 namespace zogo.Infrastructure.Persistence;
@@ -47,7 +48,15 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<PropertyFinancials> PropertyFinancials => Set<PropertyFinancials>();
     public DbSet<PropertyLegalDetails> PropertyLegalDetails => Set<PropertyLegalDetails>();
 
+    public DbSet<Feature> Features => Set<Feature>();
 
+    public DbSet<PropertyFeature> PropertyFeatures { get; set; } = null!;
+
+    public DbSet<Amenity> Amenities { get; set; } = null!;
+
+    public DbSet<PropertyAmenity> PropertyAmenities { get; set; } = null!;
+
+   public DbSet<PropertyMedia> PropertyMedia { get; set; } = null!;
 
 
 

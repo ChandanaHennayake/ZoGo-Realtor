@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using zogo.Domain.Entities.Property;
+using zogo.Domain.Entities.Master;
 
-namespace zogo.Infrastructure.Persistence.Configurations.Property;
+namespace zogo.Infrastructure.Persistence.Configurations.Master;
 
-public sealed class FurnishingTypeConfiguration
-    : IEntityTypeConfiguration<FurnishingType>
+public sealed class ApartmentTypeConfiguration
+    : IEntityTypeConfiguration<ApartmentType>
 {
-    public void Configure(EntityTypeBuilder<FurnishingType> builder)
+    public void Configure(EntityTypeBuilder<ApartmentType> builder)
     {
-        builder.ToTable("FurnishingTypes");
+        builder.ToTable("ApartmentTypes");
 
         builder.HasKey(x => x.Id);
 
@@ -19,7 +19,7 @@ public sealed class FurnishingTypeConfiguration
 
         builder.Property(x => x.Code)
             .HasColumnName("Code")
-            .HasMaxLength(30)
+            .HasMaxLength(50)
             .IsRequired();
 
         builder.Property(x => x.Name)

@@ -46,7 +46,7 @@ public sealed class PropertyLegalDetailsConfiguration
             .HasColumnName("VerifiedAt");
 
         // PropertyId -> Properties.Id
-        builder.HasOne<Domain.Entities.Property.Property>()
+        builder.HasOne<Domain.Entities.Master.Property>()
             .WithOne()
             .HasForeignKey<PropertyLegalDetails>(x => x.PropertyId)
             .OnDelete(DeleteBehavior.NoAction);

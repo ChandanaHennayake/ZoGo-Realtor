@@ -1,7 +1,7 @@
 ﻿using zogo.Application.DTOs.Properties;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
-using zogo.Domain.Entities.Property;
+using zogo.Domain.Entities.Master;
 
 namespace zogo.Application.Services;
 

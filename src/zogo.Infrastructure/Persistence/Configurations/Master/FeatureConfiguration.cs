@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using zogo.Domain.Entities.Property;
+using zogo.Domain.Entities.Master;
 
-namespace zogo.Infrastructure.Persistence.Configurations.Property;
+namespace zogo.Infrastructure.Persistence.Configurations.Master;
 
-public sealed class ViewTypeConfiguration
-    : IEntityTypeConfiguration<ViewType>
+public sealed class FeatureConfiguration : IEntityTypeConfiguration<Feature>
 {
-    public void Configure(EntityTypeBuilder<ViewType> builder)
+    public void Configure(EntityTypeBuilder<Feature> builder)
     {
-        builder.ToTable("ViewTypes");
+        builder.ToTable("Features");
 
         builder.HasKey(x => x.Id);
 
@@ -27,9 +26,16 @@ public sealed class ViewTypeConfiguration
             .HasMaxLength(100)
             .IsRequired();
 
+        builder.Property(x => x.Category)
+            .HasColumnName("Category")
+            .HasMaxLength(50);
+
         builder.Property(x => x.IsActive)
             .HasColumnName("IsActive")
-            .HasDefaultValue(true)
+            .IsRequired();
+
+        builder.Property(x => x.DisplayOrder)
+            .HasColumnName("DisplayOrder")
             .IsRequired();
     }
 }

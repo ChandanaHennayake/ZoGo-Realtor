@@ -1,4 +1,4 @@
-﻿namespace zogo.Domain.Entities.Property;
+﻿namespace zogo.Domain.Entities.Master;
 
 public class Condominium
 {

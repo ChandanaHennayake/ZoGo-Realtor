@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using zogo.Application.Interfaces.Repositories;
-using zogo.Domain.Entities.Property;
+using zogo.Domain.Entities.Master;
 
 namespace zogo.Infrastructure.Persistence.Repositories;
 

@@ -8,6 +8,7 @@ using zogo.Infrastructure.Auth;
 using zogo.Infrastructure.Persistence;
 using zogo.Infrastructure.Persistence.Repositories;
 using zogo.Infrastructure.Persistence.Repositories.Identity;
+using zogo.Infrastructure.Storage;
 
 namespace zogo.Infrastructure;
 
@@ -28,6 +29,11 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IPropertyFinancialsRepository, PropertyFinancialsRepository>();
         services.AddScoped<IPropertyLegalDetailsRepository,PropertyLegalDetailsRepository>();
+        services.AddScoped<IPropertyFeatureRepository, PropertyFeatureRepository>();
+        services.AddScoped<IPropertyAmenityRepository, PropertyAmenityRepository>();
+        services.AddScoped<IFileStorageService, CloudflareR2StorageService>();
+
+
         return services;
     }
 }

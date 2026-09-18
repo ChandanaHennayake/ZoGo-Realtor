@@ -1,8 +1,8 @@
-﻿namespace zogo.Domain.Entities.Property;
+﻿namespace zogo.Domain.Entities.Master;
 
-public class FurnishingType
+public class ApartmentType
 {
-    private FurnishingType()
+    private ApartmentType()
     {
     }
 
@@ -14,21 +14,21 @@ public class FurnishingType
 
     public bool IsActive { get; private set; }
 
-    public static FurnishingType Create(
+    public static ApartmentType Create(
         string code,
         string name)
     {
         if (string.IsNullOrWhiteSpace(code))
             throw new ArgumentException(
-                "Furnishing type code is required.",
+                "Apartment type code is required.",
                 nameof(code));
 
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException(
-                "Furnishing type name is required.",
+                "Apartment type name is required.",
                 nameof(name));
 
-        return new FurnishingType
+        return new ApartmentType
         {
             Code = code.Trim(),
             Name = name.Trim(),
@@ -42,12 +42,12 @@ public class FurnishingType
     {
         if (string.IsNullOrWhiteSpace(code))
             throw new ArgumentException(
-                "Furnishing type code is required.",
+                "Apartment type code is required.",
                 nameof(code));
 
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException(
-                "Furnishing type name is required.",
+                "Apartment type name is required.",
                 nameof(name));
 
         Code = code.Trim();

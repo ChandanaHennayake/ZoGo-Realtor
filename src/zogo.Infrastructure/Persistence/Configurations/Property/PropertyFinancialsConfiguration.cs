@@ -47,7 +47,7 @@ public sealed class PropertyFinancialsConfiguration
             .HasColumnName("OutstandingDescription");
 
         
-        builder.HasOne <Domain.Entities.Property.Property > ()
+        builder.HasOne <Domain.Entities.Master.Property > ()
             .WithOne()
             .HasForeignKey<PropertyFinancials>(x => x.PropertyId)
             .OnDelete(DeleteBehavior.NoAction);

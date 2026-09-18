@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using zogo.Domain.Entities.Property;
+using zogo.Domain.Entities.Master;
 
-namespace zogo.Infrastructure.Persistence.Configurations.Property;
+namespace zogo.Infrastructure.Persistence.Configurations.Master;
 
 public sealed class CondominiumConfiguration
     : IEntityTypeConfiguration<Condominium>

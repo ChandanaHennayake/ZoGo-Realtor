@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using zogo.Domain.Entities.Property;
+using zogo.Domain.Entities.Master;
 
-namespace zogo.Infrastructure.Persistence.Configurations.Property;
+namespace zogo.Infrastructure.Persistence.Configurations.Master;
 
 public sealed class PropertyConfiguration
-    : IEntityTypeConfiguration<Domain.Entities.Property.Property>
+    : IEntityTypeConfiguration<Domain.Entities.Master.Property>
 {
-    public void Configure(EntityTypeBuilder<Domain.Entities.Property.Property> builder)
+    public void Configure(EntityTypeBuilder<Domain.Entities.Master.Property> builder)
     {
         builder.ToTable("Properties");
 

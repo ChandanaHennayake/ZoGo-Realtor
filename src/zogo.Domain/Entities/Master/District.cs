@@ -1,8 +1,8 @@
-﻿namespace zogo.Domain.Entities.Property;
+﻿namespace zogo.Domain.Entities.Master;
 
-public class PropertyType
+public class District
 {
-    private PropertyType() { }
+    private District() { }
 
     public short Id { get; private set; }
     public string Code { get; private set; } = null!;

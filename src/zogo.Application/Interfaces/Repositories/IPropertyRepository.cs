@@ -1,4 +1,4 @@
-﻿using zogo.Domain.Entities.Property;
+﻿using zogo.Domain.Entities.Master;
 
 namespace zogo.Application.Interfaces.Repositories;
 

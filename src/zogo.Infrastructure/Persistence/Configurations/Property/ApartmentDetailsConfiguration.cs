@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using zogo.Domain.Entities.Master;
 using zogo.Domain.Entities.Property;
 
 namespace zogo.Infrastructure.Persistence.Configurations.Property;
@@ -101,7 +102,7 @@ public sealed class ApartmentDetailsConfiguration
             .HasDefaultValue(false)
             .IsRequired();
 
-        builder.HasOne<Domain.Entities.Property.Property>()
+        builder.HasOne<Domain.Entities.Master.Property>()
             .WithOne()
             .HasForeignKey<ApartmentDetails>(x => x.PropertyId)
             .OnDelete(DeleteBehavior.NoAction);
