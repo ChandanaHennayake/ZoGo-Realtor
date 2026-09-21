@@ -111,4 +111,37 @@ public class CloudflareR2StorageService : IFileStorageService
             request,
             cancellationToken);
     }
+
+
+    public async Task<Stream> DownloadAsync(
+    string storageKey,
+    CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(storageKey))
+            throw new ArgumentException(
+                "Storage key is required.",
+                nameof(storageKey));
+
+        var request = new GetObjectRequest
+        {
+            BucketName = _bucketName,
+            Key = storageKey
+        };
+
+        var response = await _s3Client.GetObjectAsync(
+            request,
+            cancellationToken);
+
+        var memoryStream = new MemoryStream();
+
+        await response.ResponseStream.CopyToAsync(
+            memoryStream,
+            cancellationToken);
+
+        memoryStream.Position = 0;
+
+        response.Dispose();
+
+        return memoryStream;
+    }
 }

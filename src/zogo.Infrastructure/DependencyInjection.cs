@@ -32,7 +32,7 @@ public static class DependencyInjection
         services.AddScoped<IPropertyFeatureRepository, PropertyFeatureRepository>();
         services.AddScoped<IPropertyAmenityRepository, PropertyAmenityRepository>();
         services.AddScoped<IFileStorageService, CloudflareR2StorageService>();
-
+        services.AddScoped<IPropertyMediaRepository, PropertyMediaRepository>();
 
         return services;
     }
