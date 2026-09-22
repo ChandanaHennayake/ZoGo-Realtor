@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using zogo.Application.Interfaces.Repositories;
@@ -14,13 +14,15 @@ namespace zogo.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(options =>options.UseNpgsql( configuration.GetConnectionString( "DefaultConnection")));
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
         services.AddScoped<IPasswordService, PasswordService>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<IGoogleAuthenticationService,GoogleAuthenticationService>();
+        services.AddScoped<IGoogleAuthenticationService, GoogleAuthenticationService>();
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IPropertyRepository, PropertyRepository>();
@@ -28,11 +30,12 @@ public static class DependencyInjection
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IPropertyFinancialsRepository, PropertyFinancialsRepository>();
-        services.AddScoped<IPropertyLegalDetailsRepository,PropertyLegalDetailsRepository>();
+        services.AddScoped<IPropertyLegalDetailsRepository, PropertyLegalDetailsRepository>();
         services.AddScoped<IPropertyFeatureRepository, PropertyFeatureRepository>();
         services.AddScoped<IPropertyAmenityRepository, PropertyAmenityRepository>();
         services.AddScoped<IFileStorageService, CloudflareR2StorageService>();
         services.AddScoped<IPropertyMediaRepository, PropertyMediaRepository>();
+        services.AddScoped<ICommonRepository, CommonRepository>();
 
         return services;
     }

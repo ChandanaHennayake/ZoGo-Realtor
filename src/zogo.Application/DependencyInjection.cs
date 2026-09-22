@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Application.Services;
@@ -26,6 +26,7 @@ public static class DependencyInjection
 
         services.AddScoped<IPropertyMediaService, PropertyMediaService>();
 
+        services.AddScoped<ICommonService, CommonService>();
 
         return services;
     }
