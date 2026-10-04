@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Properties;
+using zogo.Application.DTOs.Properties;
 
 namespace zogo.Application.Interfaces.Services;
 
@@ -19,6 +19,8 @@ public interface IPropertyService
     Task<IReadOnlyList<GetPropertyResponse>> GetMyPropertiesAsync(
     Guid userId,
     CancellationToken cancellationToken = default);
+
+    Task<bool> PublishAsync(Guid userId, Guid propertyId, CancellationToken cancellationToken = default);
 
     Task<bool> UpdateAsync(
     Guid userId,

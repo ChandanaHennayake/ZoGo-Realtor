@@ -143,6 +143,12 @@ app.UseAuthorization();
 // ------------------------------------------------------------
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<zogo.Infrastructure.Persistence.ApplicationDbContext>();
+    await zogo.Infrastructure.Persistence.MasterDataSeeder.SeedAsync(dbContext);
+}
+
 app.Run();
 
 public partial class Program;

@@ -34,6 +34,11 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
 
     public DbSet<Property> Properties =>Set<Property>();
     public DbSet<District> Districts => Set<District>();
+
+    public DbSet<Province> Provinces => Set<Province>();
+
+
+    public DbSet<City> Cities => Set<City>();
     public DbSet<DivisionalSecretariat> DivisionalSecretariats => Set<DivisionalSecretariat>();
     public DbSet<GramaNiladhariDivision> GramaNiladhariDivisions => Set<GramaNiladhariDivision>();
     public DbSet<PropertyType> PropertyTypes => Set<PropertyType>();
@@ -56,9 +61,19 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
 
     public DbSet<PropertyAmenity> PropertyAmenities { get; set; } = null!;
 
-   public DbSet<PropertyMedia> PropertyMedia { get; set; } = null!;
+    public DbSet<PropertyMedia> PropertyMedia { get; set; } = null!;
+    public DbSet<PropertyDocument> PropertyDocuments { get; set; } = null!;
 
 
+
+    protected override void OnConfiguring(
+        DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.ConfigureWarnings(w =>
+            w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+
+        base.OnConfiguring(optionsBuilder);
+    }
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)

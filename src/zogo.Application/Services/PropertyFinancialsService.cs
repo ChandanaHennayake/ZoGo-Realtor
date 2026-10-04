@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Property.Financials;
+using zogo.Application.DTOs.Property.Financials;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Property;
@@ -38,12 +38,12 @@ public sealed class PropertyFinancialsService : IPropertyFinancialsService
             throw new UnauthorizedAccessException(
                 "You are not the owner of this property.");
 
-        if (await _propertyFinancialsRepository.ExistsAsync(
-                propertyId,
-                cancellationToken))
+        var existing = await _propertyFinancialsRepository.GetByPropertyIdAsync(propertyId, cancellationToken);
+        if (existing is not null)
         {
-            throw new InvalidOperationException(
-                "Financial information already exists for this property.");
+            existing.Update(request.MaintenanceFee, request.MaintenanceFeePeriod, request.SinkingFundAmount, request.SinkingFundPeriod, request.BillsUpToDate, request.HasOutstandingCharges, request.OutstandingAmount, request.OutstandingDescription);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return MapToResponse(existing);
         }
 
         var financials = PropertyFinancials.Create(

@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Properties;
+using zogo.Application.DTOs.Properties;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Master;
@@ -66,6 +66,13 @@ public sealed class PropertyService : IPropertyService
                 nameof(request.ListingTypeId));
         }
 
+        if (request.ProvinceId <= 0)
+        {
+            throw new ArgumentException(
+                "Province is required.",
+                nameof(request.ProvinceId));
+        }
+
         if (request.DistrictId <= 0)
         {
             throw new ArgumentException(
@@ -73,18 +80,18 @@ public sealed class PropertyService : IPropertyService
                 nameof(request.DistrictId));
         }
 
+        if (request.CityId <= 0)
+        {
+            throw new ArgumentException(
+                "City is required.",
+                nameof(request.CityId));
+        }
+
         if (string.IsNullOrWhiteSpace(request.AddressLine1))
         {
             throw new ArgumentException(
                 "Address line 1 is required.",
                 nameof(request.AddressLine1));
-        }
-
-        if (string.IsNullOrWhiteSpace(request.City))
-        {
-            throw new ArgumentException(
-                "City is required.",
-                nameof(request.City));
         }
 
         if (request.AskingPrice < 0)
@@ -105,12 +112,13 @@ public sealed class PropertyService : IPropertyService
             request.ListingTypeId,
             request.Title,
             request.Description,
+            request.ProvinceId,
             request.DistrictId,
             request.DivisionalSecretariatId,
             request.GnDivisionId,
+            request.CityId,
             request.AddressLine1,
             request.AddressLine2,
-            request.City,
             request.PostalCode,
             request.Latitude,
             request.Longitude,
@@ -141,17 +149,11 @@ public sealed class PropertyService : IPropertyService
             Status = property.Status,
             CreatedAt = property.CreatedAt
         };
-
-
-
     }
 
-
-
-
     public async Task<GetPropertyResponse?> GetByIdAsync(
-    Guid propertyId,
-    CancellationToken cancellationToken = default)
+        Guid propertyId,
+        CancellationToken cancellationToken = default)
     {
         if (propertyId == Guid.Empty)
             throw new ArgumentException(
@@ -178,13 +180,14 @@ public sealed class PropertyService : IPropertyService
             Title = property.Title,
             Description = property.Description,
 
+            ProvinceId = property.ProvinceId,
             DistrictId = property.DistrictId,
             DivisionalSecretariatId = property.DivisionalSecretariatId,
             GnDivisionId = property.GnDivisionId,
+            CityId = property.CityId,
 
             AddressLine1 = property.AddressLine1,
             AddressLine2 = property.AddressLine2,
-            City = property.City,
             PostalCode = property.PostalCode,
 
             Latitude = property.Latitude,
@@ -207,8 +210,8 @@ public sealed class PropertyService : IPropertyService
     }
 
     public async Task<IReadOnlyList<GetPropertyResponse>> GetMyPropertiesAsync(
-    Guid userId,
-    CancellationToken cancellationToken = default)
+        Guid userId,
+        CancellationToken cancellationToken = default)
     {
         if (userId == Guid.Empty)
             throw new ArgumentException(
@@ -232,13 +235,14 @@ public sealed class PropertyService : IPropertyService
                 Title = property.Title,
                 Description = property.Description,
 
+                ProvinceId = property.ProvinceId,
                 DistrictId = property.DistrictId,
                 DivisionalSecretariatId = property.DivisionalSecretariatId,
                 GnDivisionId = property.GnDivisionId,
+                CityId = property.CityId,
 
                 AddressLine1 = property.AddressLine1,
                 AddressLine2 = property.AddressLine2,
-                City = property.City,
                 PostalCode = property.PostalCode,
 
                 Latitude = property.Latitude,
@@ -261,12 +265,32 @@ public sealed class PropertyService : IPropertyService
             .ToList();
     }
 
+    public async Task<bool> PublishAsync(
+        Guid userId,
+        Guid propertyId,
+        CancellationToken cancellationToken = default)
+    {
+        var property = await _propertyRepository.GetByIdAsync(
+            propertyId,
+            cancellationToken);
+
+        if (property is null || property.DeletedAt.HasValue)
+            return false;
+
+        if (property.OwnerUserId != userId)
+            throw new UnauthorizedAccessException(
+                "You are not authorized to publish this property.");
+
+        property.ChangeStatus(2, userId);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return true;
+    }
 
     public async Task<bool> UpdateAsync(
-     Guid userId,
-     Guid propertyId,
-     UpdatePropertyRequest request,
-     CancellationToken cancellationToken = default)
+        Guid userId,
+        Guid propertyId,
+        UpdatePropertyRequest request,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -295,20 +319,25 @@ public sealed class PropertyService : IPropertyService
                 "Property title is required.",
                 nameof(request.Title));
 
+        if (request.ProvinceId <= 0)
+            throw new ArgumentException(
+                "Province is required.",
+                nameof(request.ProvinceId));
+
         if (request.DistrictId <= 0)
             throw new ArgumentException(
                 "District is required.",
                 nameof(request.DistrictId));
 
+        if (request.CityId <= 0)
+            throw new ArgumentException(
+                "City is required.",
+                nameof(request.CityId));
+
         if (string.IsNullOrWhiteSpace(request.AddressLine1))
             throw new ArgumentException(
                 "Address line 1 is required.",
                 nameof(request.AddressLine1));
-
-        if (string.IsNullOrWhiteSpace(request.City))
-            throw new ArgumentException(
-                "City is required.",
-                nameof(request.City));
 
         if (request.AskingPrice < 0)
             throw new ArgumentException(
@@ -334,12 +363,13 @@ public sealed class PropertyService : IPropertyService
             request.Description,
             request.PropertyTypeId,
             request.ListingTypeId,
+            request.ProvinceId,
             request.DistrictId,
             request.DivisionalSecretariatId,
             request.GnDivisionId,
+            request.CityId,
             request.AddressLine1,
             request.AddressLine2,
-            request.City,
             request.PostalCode,
             request.Latitude,
             request.Longitude,

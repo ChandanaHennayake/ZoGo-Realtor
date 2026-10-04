@@ -1,4 +1,4 @@
-using zogo.Application.DTOs.Common;
+﻿using zogo.Application.DTOs.Common;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 
@@ -231,10 +231,11 @@ public class CommonService : ICommonService
             cityNames.Add(ds.Name);
         }
 
-        return cityNames
-            .OrderBy(c => c)
-            .Select(c => new CityResponse
+        var sorted = cityNames.OrderBy(c => c).ToList();
+        return sorted
+            .Select((c, index) => new CityResponse
             {
+                Id = (districtId * 1000) + index + 1,
                 DistrictId = districtId,
                 Name = c
             })

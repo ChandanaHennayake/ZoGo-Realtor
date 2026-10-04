@@ -1,14 +1,12 @@
 ﻿namespace zogo.Domain.Entities.Master;
 
-
-
-public class District
+public class City
 {
-    private District() { }
+    private City() { }
 
-    public short Id { get; private set; }
+    public int Id { get; private set; }
 
-    public short ProvinceId { get; private set; }
+    public short DistrictId { get; private set; }
 
     public string Code { get; private set; } = null!;
 

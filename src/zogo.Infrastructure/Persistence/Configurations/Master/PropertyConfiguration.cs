@@ -43,6 +43,10 @@ public sealed class PropertyConfiguration
         builder.Property(x => x.Description)
             .HasColumnName("Description");
 
+        builder.Property(x => x.ProvinceId)
+            .HasColumnName("ProvinceId")
+            .IsRequired();
+
         builder.Property(x => x.DistrictId)
             .HasColumnName("DistrictId")
             .IsRequired();
@@ -53,6 +57,10 @@ public sealed class PropertyConfiguration
         builder.Property(x => x.GnDivisionId)
             .HasColumnName("GnDivisionId");
 
+        builder.Property(x => x.CityId)
+            .HasColumnName("CityId")
+            .IsRequired();
+
         builder.Property(x => x.AddressLine1)
             .HasColumnName("AddressLine1")
             .HasMaxLength(250)
@@ -61,11 +69,6 @@ public sealed class PropertyConfiguration
         builder.Property(x => x.AddressLine2)
             .HasColumnName("AddressLine2")
             .HasMaxLength(250);
-
-        builder.Property(x => x.City)
-            .HasColumnName("City")
-            .HasMaxLength(100)
-            .IsRequired();
 
         builder.Property(x => x.PostalCode)
             .HasColumnName("PostalCode")
@@ -122,13 +125,24 @@ public sealed class PropertyConfiguration
             .IsUnique()
             .HasDatabaseName("UX_Properties_ReferenceNo");
 
+        builder.HasIndex(x => x.ProvinceId)
+            .HasDatabaseName("IX_Properties_ProvinceId");
+
+        builder.HasIndex(x => x.DistrictId)
+            .HasDatabaseName("IX_Properties_DistrictId");
+
+        builder.HasIndex(x => x.CityId)
+            .HasDatabaseName("IX_Properties_CityId");
+
         builder.HasIndex(x => x.Status)
             .HasDatabaseName("IX_Properties_Status");
 
         builder.HasIndex(x => new
         {
             x.PropertyTypeId,
+            x.ProvinceId,
             x.DistrictId,
+            x.CityId,
             x.Status,
             x.AskingPrice
         })

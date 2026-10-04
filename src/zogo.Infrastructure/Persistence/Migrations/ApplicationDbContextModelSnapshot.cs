@@ -324,6 +324,33 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.ToTable("ApartmentTypes", (string)null);
                 });
 
+            modelBuilder.Entity("zogo.Domain.Entities.Master.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<short>("DistrictId")
+                        .HasColumnType("smallint");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cities");
+                });
+
             modelBuilder.Entity("zogo.Domain.Entities.Master.Condominium", b =>
                 {
                     b.Property<Guid>("Id")
@@ -388,51 +415,63 @@ namespace zogo.Infrastructure.Persistence.Migrations
                 {
                     b.Property<short>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
+                        .HasColumnType("smallint")
+                        .HasColumnName("Id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<short>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Code");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("IsActive");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Name");
+
+                    b.Property<short>("ProvinceId")
+                        .HasColumnType("smallint");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Districts");
+                    b.ToTable("Districts", (string)null);
                 });
 
             modelBuilder.Entity("zogo.Domain.Entities.Master.DivisionalSecretariat", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("Id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Code");
 
                     b.Property<short>("DistrictId")
-                        .HasColumnType("smallint");
+                        .HasColumnType("smallint")
+                        .HasColumnName("DistrictId");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("IsActive");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Name");
 
                     b.HasKey("Id");
 
-                    b.ToTable("DivisionalSecretariats");
+                    b.ToTable("DivisionalSecretariats", (string)null);
                 });
 
             modelBuilder.Entity("zogo.Domain.Entities.Master.Feature", b =>
@@ -510,27 +549,32 @@ namespace zogo.Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("Id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Code");
 
                     b.Property<int>("DivisionalSecretariatId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("DivisionalSecretariatId");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("IsActive");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("Name");
 
                     b.HasKey("Id");
 
-                    b.ToTable("GramaNiladhariDivisions");
+                    b.ToTable("GramaNiladhariDivisions", (string)null);
                 });
 
             modelBuilder.Entity("zogo.Domain.Entities.Master.ListingType", b =>
@@ -581,11 +625,9 @@ namespace zogo.Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("AskingPrice");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("City");
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer")
+                        .HasColumnName("CityId");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -650,6 +692,10 @@ namespace zogo.Infrastructure.Persistence.Migrations
                         .HasColumnType("smallint")
                         .HasColumnName("PropertyTypeId");
 
+                    b.Property<short>("ProvinceId")
+                        .HasColumnType("smallint")
+                        .HasColumnName("ProvinceId");
+
                     b.Property<DateTime?>("PublishedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("PublishedAt");
@@ -686,9 +732,13 @@ namespace zogo.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CityId")
+                        .HasDatabaseName("IX_Properties_CityId");
+
                     b.HasIndex("CreatedBy");
 
-                    b.HasIndex("DistrictId");
+                    b.HasIndex("DistrictId")
+                        .HasDatabaseName("IX_Properties_DistrictId");
 
                     b.HasIndex("DivisionalSecretariatId");
 
@@ -699,6 +749,9 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.HasIndex("OwnerUserId")
                         .HasDatabaseName("IX_Properties_Owner");
 
+                    b.HasIndex("ProvinceId")
+                        .HasDatabaseName("IX_Properties_ProvinceId");
+
                     b.HasIndex("ReferenceNo")
                         .IsUnique()
                         .HasDatabaseName("UX_Properties_ReferenceNo");
@@ -708,7 +761,7 @@ namespace zogo.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UpdatedBy");
 
-                    b.HasIndex("PropertyTypeId", "DistrictId", "Status", "AskingPrice")
+                    b.HasIndex("PropertyTypeId", "ProvinceId", "DistrictId", "CityId", "Status", "AskingPrice")
                         .HasDatabaseName("IX_Properties_Search");
 
                     b.ToTable("Properties", (string)null);
@@ -736,6 +789,30 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PropertyTypes");
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Master.Province", b =>
+                {
+                    b.Property<short>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<short>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Provinces");
                 });
 
             modelBuilder.Entity("zogo.Domain.Entities.Master.ViewType", b =>
@@ -891,6 +968,93 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.ToTable("ApartmentDetails", (string)null);
                 });
 
+            modelBuilder.Entity("zogo.Domain.Entities.Property.PropertyAmenity", b =>
+                {
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("PropertyId");
+
+                    b.Property<int>("AmenityId")
+                        .HasColumnType("integer")
+                        .HasColumnName("AmenityId");
+
+                    b.HasKey("PropertyId", "AmenityId");
+
+                    b.HasIndex("AmenityId");
+
+                    b.ToTable("PropertyAmenities", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Property.PropertyDocument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<int>("DocumentTypeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("DocumentTypeId");
+
+                    b.Property<long?>("FileSizeBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("FileSizeBytes");
+
+                    b.Property<string>("MimeType")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("MimeType");
+
+                    b.Property<string>("OriginalFileName")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("OriginalFileName");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("PropertyId");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("text")
+                        .HasColumnName("RejectionReason");
+
+                    b.Property<short>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)1)
+                        .HasColumnName("Status");
+
+                    b.Property<string>("StorageKey")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("StorageKey");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("UploadedAt")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("UploadedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("UploadedBy");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VerifiedAt");
+
+                    b.Property<Guid?>("VerifiedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("VerifiedBy");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("PropertyDocuments", (string)null);
+                });
+
             modelBuilder.Entity("zogo.Domain.Entities.Property.PropertyFeature", b =>
                 {
                     b.Property<Guid>("PropertyId")
@@ -901,14 +1065,9 @@ namespace zogo.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("FeatureId");
 
-                    b.Property<int>("FeatureId1")
-                        .HasColumnType("integer");
-
                     b.HasKey("PropertyId", "FeatureId");
 
                     b.HasIndex("FeatureId");
-
-                    b.HasIndex("FeatureId1");
 
                     b.ToTable("PropertyFeatures", (string)null);
                 });
@@ -1003,6 +1162,66 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.HasKey("PropertyId");
 
                     b.ToTable("PropertyLegalDetails", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Property.PropertyMedia", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("DisplayOrder");
+
+                    b.Property<long>("FileSizeBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("FileSizeBytes");
+
+                    b.Property<bool>("IsCover")
+                        .HasColumnType("boolean")
+                        .HasColumnName("IsCover");
+
+                    b.Property<short>("MediaType")
+                        .HasColumnType("smallint")
+                        .HasColumnName("MediaType");
+
+                    b.Property<string>("MimeType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("MimeType");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("OriginalFileName");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("PropertyId");
+
+                    b.Property<string>("StorageKey")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("StorageKey");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("PropertyMedia", (string)null);
                 });
 
             modelBuilder.Entity("zogo.Domain.Entities.Identity.DeviceToken", b =>
@@ -1153,18 +1372,32 @@ namespace zogo.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
                 });
 
-            modelBuilder.Entity("zogo.Domain.Entities.Property.PropertyFeature", b =>
+            modelBuilder.Entity("zogo.Domain.Entities.Property.PropertyAmenity", b =>
                 {
-                    b.HasOne("zogo.Domain.Entities.Master.Feature", null)
+                    b.HasOne("zogo.Domain.Entities.Master.Amenity", "Amenity")
                         .WithMany()
-                        .HasForeignKey("FeatureId")
+                        .HasForeignKey("AmenityId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("Amenity");
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Property.PropertyDocument", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Master.Property", null)
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Property.PropertyFeature", b =>
+                {
                     b.HasOne("zogo.Domain.Entities.Master.Feature", "Feature")
                         .WithMany()
-                        .HasForeignKey("FeatureId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("zogo.Domain.Entities.Master.Property", null)
@@ -1190,6 +1423,15 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.HasOne("zogo.Domain.Entities.Master.Property", null)
                         .WithOne()
                         .HasForeignKey("zogo.Domain.Entities.Property.PropertyLegalDetails", "PropertyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Property.PropertyMedia", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Master.Property", null)
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

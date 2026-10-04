@@ -8,13 +8,16 @@ public sealed class UpdatePropertyRequest
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
 
+    public short ProvinceId { get; set; }
     public short DistrictId { get; set; }
     public int? DivisionalSecretariatId { get; set; }
     public int? GnDivisionId { get; set; }
 
+    public int CityId { get; set; }
+    public string? City { get; set; }
+
     public string AddressLine1 { get; set; } = null!;
     public string? AddressLine2 { get; set; }
-    public string City { get; set; } = null!;
     public string? PostalCode { get; set; }
 
     public decimal? Latitude { get; set; }

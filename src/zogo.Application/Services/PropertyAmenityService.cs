@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Properties.PropertyAmenity;
+using zogo.Application.DTOs.Properties.PropertyAmenity;
 using zogo.Application.DTOs.Property.PropertyAmenity;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
@@ -48,8 +48,13 @@ public class PropertyAmenityService : IPropertyAmenityService
             cancellationToken);
 
         if (exists)
-            throw new InvalidOperationException(
-                "This amenity is already assigned to the property.");
+        {
+            return new PropertyAmenityResponse
+            {
+                PropertyId = propertyId,
+                AmenityId = request.AmenityId
+            };
+        }
 
         var propertyAmenity = PropertyAmenity.Create(
             propertyId,

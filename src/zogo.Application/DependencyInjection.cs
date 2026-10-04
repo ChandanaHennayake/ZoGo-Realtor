@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Application.Services;
@@ -19,12 +19,14 @@ public static class DependencyInjection
         services.AddScoped<IApartmentDetailsService, ApartmentDetailsService>();
 
         services.AddScoped<IPropertyLegalDetailsService, PropertyLegalDetailsService>();
+        services.AddScoped<IPropertyFinancialsService, PropertyFinancialsService>();
 
         services.AddScoped<IPropertyFeatureService, PropertyFeatureService>();
 
         services.AddScoped<IPropertyAmenityService, PropertyAmenityService>();
 
         services.AddScoped<IPropertyMediaService, PropertyMediaService>();
+        services.AddScoped<IPropertyDocumentService, PropertyDocumentService>();
 
         services.AddScoped<ICommonService, CommonService>();
 

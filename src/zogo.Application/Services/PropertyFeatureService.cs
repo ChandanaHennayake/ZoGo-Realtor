@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Property.PropertyFeature;
+using zogo.Application.DTOs.Property.PropertyFeature;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Property;
@@ -47,8 +47,13 @@ public class PropertyFeatureService : IPropertyFeatureService
             cancellationToken);
 
         if (exists)
-            throw new InvalidOperationException(
-                "This feature is already assigned to the property.");
+        {
+            return new PropertyFeatureResponse
+            {
+                PropertyId = propertyId,
+                FeatureId = request.FeatureId
+            };
+        }
 
         var propertyFeature = PropertyFeature.Create(
             propertyId,

@@ -20,17 +20,19 @@ public class Property
 
     public string? Description { get; private set; }
 
+    public short ProvinceId { get; private set; }
+
     public short DistrictId { get; private set; }
 
     public int? DivisionalSecretariatId { get; private set; }
 
     public int? GnDivisionId { get; private set; }
 
+    public int CityId { get; private set; }
+
     public string AddressLine1 { get; private set; } = null!;
 
     public string? AddressLine2 { get; private set; }
-
-    public string City { get; private set; } = null!;
 
     public string? PostalCode { get; private set; }
 
@@ -66,12 +68,13 @@ public class Property
         short listingTypeId,
         string title,
         string? description,
+        short provinceId,
         short districtId,
         int? divisionalSecretariatId,
         int? gnDivisionId,
+        int cityId,
         string addressLine1,
         string? addressLine2,
-        string city,
         string? postalCode,
         decimal? latitude,
         decimal? longitude,
@@ -104,20 +107,25 @@ public class Property
                 "Property title is required.",
                 nameof(title));
 
+        if (provinceId <= 0)
+            throw new ArgumentException(
+                "Province is required.",
+                nameof(provinceId));
+
         if (districtId <= 0)
             throw new ArgumentException(
                 "District is required.",
                 nameof(districtId));
 
+        if (cityId <= 0)
+            throw new ArgumentException(
+                "City is required.",
+                nameof(cityId));
+
         if (string.IsNullOrWhiteSpace(addressLine1))
             throw new ArgumentException(
                 "Address line 1 is required.",
                 nameof(addressLine1));
-
-        if (string.IsNullOrWhiteSpace(city))
-            throw new ArgumentException(
-                "City is required.",
-                nameof(city));
 
         if (askingPrice < 0)
             throw new ArgumentException(
@@ -146,17 +154,17 @@ public class Property
                 ? null
                 : description.Trim(),
 
+            ProvinceId = provinceId,
             DistrictId = districtId,
             DivisionalSecretariatId = divisionalSecretariatId,
             GnDivisionId = gnDivisionId,
+            CityId = cityId,
 
             AddressLine1 = addressLine1.Trim(),
 
             AddressLine2 = string.IsNullOrWhiteSpace(addressLine2)
                 ? null
                 : addressLine2.Trim(),
-
-            City = city.Trim(),
 
             PostalCode = string.IsNullOrWhiteSpace(postalCode)
                 ? null
@@ -190,12 +198,13 @@ public class Property
         string? description,
         short propertyTypeId,
         short listingTypeId,
+        short provinceId,
         short districtId,
         int? divisionalSecretariatId,
         int? gnDivisionId,
+        int cityId,
         string addressLine1,
         string? addressLine2,
-        string city,
         string? postalCode,
         decimal? latitude,
         decimal? longitude,
@@ -207,6 +216,26 @@ public class Property
             throw new ArgumentException(
                 "Property title is required.",
                 nameof(title));
+
+        if (provinceId <= 0)
+            throw new ArgumentException(
+                "Province is required.",
+                nameof(provinceId));
+
+        if (districtId <= 0)
+            throw new ArgumentException(
+                "District is required.",
+                nameof(districtId));
+
+        if (cityId <= 0)
+            throw new ArgumentException(
+                "City is required.",
+                nameof(cityId));
+
+        if (string.IsNullOrWhiteSpace(addressLine1))
+            throw new ArgumentException(
+                "Address line 1 is required.",
+                nameof(addressLine1));
 
         if (askingPrice < 0)
             throw new ArgumentException(
@@ -222,17 +251,17 @@ public class Property
         PropertyTypeId = propertyTypeId;
         ListingTypeId = listingTypeId;
 
+        ProvinceId = provinceId;
         DistrictId = districtId;
         DivisionalSecretariatId = divisionalSecretariatId;
         GnDivisionId = gnDivisionId;
+        CityId = cityId;
 
         AddressLine1 = addressLine1.Trim();
 
         AddressLine2 = string.IsNullOrWhiteSpace(addressLine2)
             ? null
             : addressLine2.Trim();
-
-        City = city.Trim();
 
         PostalCode = string.IsNullOrWhiteSpace(postalCode)
             ? null

@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zogo.Application.DTOs.Properties;
@@ -8,7 +8,7 @@ namespace zogo.API.Controllers;
 
 [ApiController]
 [Route("api/v1/properties")]
-[Authorize(Roles = "SEL")]
+//[Authorize(Roles = "SEL")]
 public sealed class PropertyController : ControllerBase
 {
     private readonly IPropertyService _propertyService;
@@ -83,6 +83,31 @@ public sealed class PropertyController : ControllerBase
             cancellationToken);
 
         return Ok(result);
+    }
+
+    [HttpPost("{propertyId:guid}/publish")]
+    public async Task<IActionResult> Publish(
+        Guid propertyId,
+        CancellationToken cancellationToken)
+    {
+        var userIdClaim =
+            User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("sub");
+
+        if (!Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var published = await _propertyService.PublishAsync(
+            userId,
+            propertyId,
+            cancellationToken);
+
+        if (!published)
+            return NotFound();
+
+        return Ok(new { message = "Property published successfully" });
     }
 
     [HttpPut("{propertyId:guid}")]

@@ -30,7 +30,7 @@ public class PropertyFeatureConfiguration : IEntityTypeConfiguration<PropertyFea
             .HasForeignKey(x => x.PropertyId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasOne<Feature>()
+        builder.HasOne(x => x.Feature)
             .WithMany()
             .HasForeignKey(x => x.FeatureId)
             .OnDelete(DeleteBehavior.NoAction);
