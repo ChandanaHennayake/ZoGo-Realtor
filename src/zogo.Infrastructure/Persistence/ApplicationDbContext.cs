@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using zogo.Application.Interfaces.Repositories;
+using zogo.Domain.Entities.Buyer;
 using zogo.Domain.Entities.Identity;
 using zogo.Domain.Entities.Master;
 using zogo.Domain.Entities.Property;
@@ -20,11 +21,11 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
 
     public DbSet<Role> Roles => Set<Role>();
 
-    public DbSet<UserRole> UserRoles =>Set<UserRole>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
-    public DbSet<PasswordReset> PasswordResets =>Set<PasswordReset>();
+    public DbSet<PasswordReset> PasswordResets => Set<PasswordReset>();
 
     public DbSet<DeviceToken> DeviceTokens => Set<DeviceToken>();
 
@@ -32,7 +33,7 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     // Property
     // =========================================================
 
-    public DbSet<Property> Properties =>Set<Property>();
+    public DbSet<Property> Properties => Set<Property>();
     public DbSet<District> Districts => Set<District>();
 
     public DbSet<Province> Provinces => Set<Province>();
@@ -43,6 +44,7 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<GramaNiladhariDivision> GramaNiladhariDivisions => Set<GramaNiladhariDivision>();
     public DbSet<PropertyType> PropertyTypes => Set<PropertyType>();
     public DbSet<ListingType> ListingTypes => Set<ListingType>();
+    public DbSet<PropertyStatus> PropertyStatuses => Set<PropertyStatus>();
 
     public DbSet<Condominium> Condominiums => Set<Condominium>();
     public DbSet<ApartmentType> ApartmentTypes => Set<ApartmentType>();
@@ -64,7 +66,13 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<PropertyMedia> PropertyMedia { get; set; } = null!;
     public DbSet<PropertyDocument> PropertyDocuments { get; set; } = null!;
 
+    // =========================================================
+    // Buyer
+    // =========================================================
 
+    public DbSet<Favorite> Favorites => Set<Favorite>();
+    public DbSet<PropertyInterest> PropertyInterests => Set<PropertyInterest>();
+    public DbSet<BuyerPropertyInteraction> BuyerPropertyInteractions => Set<BuyerPropertyInteraction>();
 
     protected override void OnConfiguring(
         DbContextOptionsBuilder optionsBuilder)
@@ -83,7 +91,4 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
 
         base.OnModelCreating(modelBuilder);
     }
-
-
-   
 }

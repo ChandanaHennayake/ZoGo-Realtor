@@ -22,6 +22,99 @@ namespace zogo.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.BuyerPropertyInteraction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("BuyerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("BuyerId");
+
+                    b.Property<short>("CurrentStatus")
+                        .HasColumnType("smallint")
+                        .HasColumnName("CurrentStatus");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("PropertyId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("BuyerId", "PropertyId")
+                        .IsUnique();
+
+                    b.ToTable("BuyerPropertyInteractions", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.Favorite", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("UserId");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("PropertyId");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("UserId", "PropertyId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("Favorites", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.PropertyInterest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("BuyerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("BuyerId");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("PropertyId");
+
+                    b.Property<short>("Status")
+                        .HasColumnType("smallint")
+                        .HasColumnName("Status");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("UpdatedAt");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("BuyerId", "PropertyId")
+                        .IsUnique();
+
+                    b.ToTable("PropertyInterests", (string)null);
+                });
+
             modelBuilder.Entity("zogo.Domain.Entities.Identity.DeviceToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -767,6 +860,89 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.ToTable("Properties", (string)null);
                 });
 
+            modelBuilder.Entity("zogo.Domain.Entities.Master.PropertyStatus", b =>
+                {
+                    b.Property<short>("Id")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PropertyStatuses", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = (short)1,
+                            Code = "DRAFT",
+                            IsActive = true,
+                            Name = "Draft"
+                        },
+                        new
+                        {
+                            Id = (short)2,
+                            Code = "PUBLISHED",
+                            IsActive = true,
+                            Name = "Published"
+                        },
+                        new
+                        {
+                            Id = (short)3,
+                            Code = "UNDER_REVIEW",
+                            IsActive = true,
+                            Name = "Under Review"
+                        },
+                        new
+                        {
+                            Id = (short)4,
+                            Code = "PENDING_APPROVAL",
+                            IsActive = true,
+                            Name = "Pending Approval"
+                        },
+                        new
+                        {
+                            Id = (short)5,
+                            Code = "SOLD",
+                            IsActive = true,
+                            Name = "Sold"
+                        },
+                        new
+                        {
+                            Id = (short)6,
+                            Code = "RENTED",
+                            IsActive = true,
+                            Name = "Rented"
+                        },
+                        new
+                        {
+                            Id = (short)7,
+                            Code = "SUSPENDED",
+                            IsActive = true,
+                            Name = "Suspended"
+                        },
+                        new
+                        {
+                            Id = (short)8,
+                            Code = "INACTIVE",
+                            IsActive = true,
+                            Name = "Inactive"
+                        });
+                });
+
             modelBuilder.Entity("zogo.Domain.Entities.Master.PropertyType", b =>
                 {
                     b.Property<short>("Id")
@@ -1222,6 +1398,63 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.HasIndex("PropertyId");
 
                     b.ToTable("PropertyMedia", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.BuyerPropertyInteraction", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "Buyer")
+                        .WithMany()
+                        .HasForeignKey("BuyerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Master.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.Favorite", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Master.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Property");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.PropertyInterest", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "Buyer")
+                        .WithMany()
+                        .HasForeignKey("BuyerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Master.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("zogo.Domain.Entities.Identity.DeviceToken", b =>

@@ -272,6 +272,24 @@ public class CommonService : ICommonService
         }).ToList();
     }
 
+    public static readonly IReadOnlyList<PropertyStatusResponse> DefaultPropertyStatuses = new List<PropertyStatusResponse>
+    {
+        new() { Id = 1, Code = "DRAFT", Name = "Draft" },
+        new() { Id = 2, Code = "PUBLISHED", Name = "Published" },
+        new() { Id = 3, Code = "UNDER_REVIEW", Name = "Under Review" },
+        new() { Id = 4, Code = "PENDING_APPROVAL", Name = "Pending Approval" },
+        new() { Id = 5, Code = "SOLD", Name = "Sold" },
+        new() { Id = 6, Code = "RENTED", Name = "Rented" },
+        new() { Id = 7, Code = "SUSPENDED", Name = "Suspended" },
+        new() { Id = 8, Code = "INACTIVE", Name = "Inactive" }
+    };
+
+    public Task<IReadOnlyList<PropertyStatusResponse>> GetPropertyStatusesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(DefaultPropertyStatuses);
+    }
+
     private static short ResolveProvinceId(string districtName, string districtCode)
     {
         if (DistrictNameToProvinceId.TryGetValue(districtName, out var pid))
@@ -283,3 +301,4 @@ public class CommonService : ICommonService
         return 1;
     }
 }
+

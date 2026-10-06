@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zogo.Application.DTOs.Common;
 using zogo.Application.Interfaces.Services;
@@ -60,4 +60,11 @@ public class CommonController : ControllerBase
         var result = await _commonService.GetGramaNiladhariDivisionsAsync(dsId, cancellationToken);
         return Ok(result);
     }
-} 
+    [HttpGet("property-statuses")]
+    public async Task<ActionResult<IReadOnlyList<PropertyStatusResponse>>> GetPropertyStatuses(
+        CancellationToken cancellationToken)
+    {
+        var result = await _commonService.GetPropertyStatusesAsync(cancellationToken);
+        return Ok(result);
+    }
+}

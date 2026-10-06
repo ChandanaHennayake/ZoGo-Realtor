@@ -1,4 +1,4 @@
-using zogo.Application.DTOs.Common;
+﻿using zogo.Application.DTOs.Common;
 
 namespace zogo.Application.Interfaces.Services;
 
@@ -9,4 +9,6 @@ public interface ICommonService
     Task<IReadOnlyList<CityResponse>> GetCitiesByDistrictAsync(short districtId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<DivisionalSecretariatResponse>> GetDivisionalSecretariatsAsync(short districtId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<GramaNiladhariDivisionResponse>> GetGramaNiladhariDivisionsAsync(int divisionalSecretariatId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<PropertyStatusResponse>> GetPropertyStatusesAsync(CancellationToken cancellationToken = default);
 }
+

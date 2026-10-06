@@ -1,4 +1,4 @@
-using zogo.Application.DTOs.Properties;
+﻿using zogo.Application.DTOs.Properties;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Master;
@@ -147,6 +147,7 @@ public sealed class PropertyService : IPropertyService
             ReferenceNo = property.ReferenceNo,
             OwnerUserId = property.OwnerUserId,
             Status = property.Status,
+            StatusName = ResolveStatusName(property.Status),
             CreatedAt = property.CreatedAt
         };
     }
@@ -197,6 +198,7 @@ public sealed class PropertyService : IPropertyService
             IsNegotiable = property.IsNegotiable,
 
             Status = property.Status,
+            StatusName = ResolveStatusName(property.Status),
 
             PublishedAt = property.PublishedAt,
             SoldAt = property.SoldAt,
@@ -252,6 +254,7 @@ public sealed class PropertyService : IPropertyService
                 IsNegotiable = property.IsNegotiable,
 
                 Status = property.Status,
+            StatusName = ResolveStatusName(property.Status),
 
                 PublishedAt = property.PublishedAt,
                 SoldAt = property.SoldAt,
@@ -381,4 +384,17 @@ public sealed class PropertyService : IPropertyService
 
         return true;
     }
+
+    private static string ResolveStatusName(short status) => status switch
+    {
+        1 => "Draft",
+        2 => "Published",
+        3 => "Under Review",
+        4 => "Pending Approval",
+        5 => "Sold",
+        6 => "Rented",
+        7 => "Suspended",
+        8 => "Inactive",
+        _ => $"Status #{status}"
+    };
 }

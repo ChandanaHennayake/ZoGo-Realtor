@@ -142,6 +142,7 @@ app.UseAuthorization();
 // Controllers
 // ------------------------------------------------------------
 app.MapControllers();
+app.MapGet("/api/v1/health", () => Results.Ok(new { success = true, data = new { status = "Healthy" } }));
 
 using (var scope = app.Services.CreateScope())
 {

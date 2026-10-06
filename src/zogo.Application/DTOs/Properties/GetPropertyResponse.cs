@@ -32,6 +32,7 @@ public sealed class GetPropertyResponse
     public bool IsNegotiable { get; set; }
 
     public short Status { get; set; }
+    public string? StatusName { get; set; }
 
     public DateTime? PublishedAt { get; set; }
     public DateTime? SoldAt { get; set; }
@@ -42,3 +43,4 @@ public sealed class GetPropertyResponse
     public Guid? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
+

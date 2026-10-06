@@ -10,9 +10,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<IAuthenticationService,AuthenticationService>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
 
-        services.AddScoped<IPropertyService,PropertyService>();
+        services.AddScoped<IPropertyService, PropertyService>();
 
         services.AddScoped<ISellerService, SellerService>();
 
@@ -29,6 +29,10 @@ public static class DependencyInjection
         services.AddScoped<IPropertyDocumentService, PropertyDocumentService>();
 
         services.AddScoped<ICommonService, CommonService>();
+
+        services.AddScoped<IFavoriteService, FavoriteService>();
+        services.AddScoped<IPropertyInterestService, PropertyInterestService>();
+        services.AddScoped<IBuyerPropertyInteractionService, BuyerPropertyInteractionService>();
 
         return services;
     }

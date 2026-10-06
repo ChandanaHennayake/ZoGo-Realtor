@@ -38,6 +38,10 @@ public static class DependencyInjection
         services.AddScoped<IPropertyDocumentRepository, PropertyDocumentRepository>();
         services.AddScoped<ICommonRepository, CommonRepository>();
 
+        services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+        services.AddScoped<IPropertyInterestRepository, PropertyInterestRepository>();
+        services.AddScoped<IBuyerPropertyInteractionRepository, BuyerPropertyInteractionRepository>();
+
         return services;
     }
 }
