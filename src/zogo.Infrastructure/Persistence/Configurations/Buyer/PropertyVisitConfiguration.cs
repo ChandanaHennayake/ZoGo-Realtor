@@ -1,0 +1,71 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using zogo.Domain.Entities.Buyer;
+
+namespace zogo.Infrastructure.Persistence.Configurations.Buyer;
+
+public sealed class PropertyVisitConfiguration : IEntityTypeConfiguration<PropertyVisit>
+{
+    public void Configure(EntityTypeBuilder<PropertyVisit> builder)
+    {
+        builder.ToTable("PropertyVisits");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasColumnName("Id")
+            .HasDefaultValueSql("gen_random_uuid()")
+            .ValueGeneratedOnAdd();
+
+        builder.Property(x => x.PropertyId)
+            .IsRequired();
+
+        builder.Property(x => x.BuyerId)
+            .IsRequired();
+
+        builder.Property(x => x.AssignedAgentId);
+
+        builder.Property(x => x.ScheduledAt)
+            .IsRequired();
+
+        builder.Property(x => x.TimeSlot)
+            .HasMaxLength(50);
+
+        builder.Property(x => x.BuyerNotes)
+            .HasMaxLength(500);
+
+        builder.Property(x => x.AgentNotes)
+            .HasMaxLength(500);
+
+        builder.Property(x => x.Status)
+            .HasDefaultValue((short)1)
+            .IsRequired();
+
+        builder.Property(x => x.CreatedAt)
+            .HasDefaultValueSql("now()")
+            .IsRequired();
+
+        builder.Property(x => x.UpdatedAt);
+        builder.Property(x => x.DeletedAt);
+
+        builder.HasIndex(x => x.PropertyId);
+        builder.HasIndex(x => x.BuyerId);
+        builder.HasIndex(x => x.AssignedAgentId);
+        builder.HasIndex(x => x.Status);
+
+        builder.HasOne(x => x.Property)
+            .WithMany()
+            .HasForeignKey(x => x.PropertyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(x => x.Buyer)
+            .WithMany()
+            .HasForeignKey(x => x.BuyerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.AssignedAgent)
+            .WithMany()
+            .HasForeignKey(x => x.AssignedAgentId)
+            .OnDelete(DeleteBehavior.SetNull);
+    }
+}
