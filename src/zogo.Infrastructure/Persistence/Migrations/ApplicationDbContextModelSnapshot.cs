@@ -22,6 +22,84 @@ namespace zogo.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("zogo.Domain.Entities.Agent.AgentDistrict", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AgentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("AgentId");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<short>("DistrictId")
+                        .HasColumnType("smallint")
+                        .HasColumnName("DistrictId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId");
+
+                    b.HasIndex("DistrictId");
+
+                    b.HasIndex("AgentId", "DistrictId")
+                        .IsUnique();
+
+                    b.ToTable("AgentDistricts", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Agent.AgentProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer")
+                        .HasColumnName("CityId");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("IsActive");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("UpdatedAt");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("AgentProfiles", (string)null);
+                });
+
             modelBuilder.Entity("zogo.Domain.Entities.Buyer.BuyerPropertyInteraction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -43,6 +121,8 @@ namespace zogo.Infrastructure.Persistence.Migrations
                         .HasColumnName("PropertyId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CurrentStatus");
 
                     b.HasIndex("PropertyId");
 
@@ -109,10 +189,211 @@ namespace zogo.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("PropertyId");
 
+                    b.HasIndex("Status");
+
                     b.HasIndex("BuyerId", "PropertyId")
                         .IsUnique();
 
                     b.ToTable("PropertyInterests", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.PropertyOffer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("BuyerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BuyerNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<decimal?>("CounterAmount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("OfferAmount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SellerNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<short>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)1);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuyerId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("PropertyOffers", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.PropertyTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid?>("AgentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("AgreedPrice")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid>("BuyerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ClosingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ClosingNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<decimal>("CommissionAmount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("CommissionRate")
+                        .HasColumnType("numeric(5,4)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NotaryName")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<Guid?>("OfferId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<short>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)1);
+
+                    b.Property<string>("TitleDeedReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId");
+
+                    b.HasIndex("BuyerId");
+
+                    b.HasIndex("OfferId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("SellerId");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("PropertyTransactions", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.PropertyVisit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("AgentNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid?>("AssignedAgentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BuyerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BuyerNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<short>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)1);
+
+                    b.Property<string>("TimeSlot")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedAgentId");
+
+                    b.HasIndex("BuyerId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("Status");
+
+                    b.ToTable("PropertyVisits", (string)null);
                 });
 
             modelBuilder.Entity("zogo.Domain.Entities.Identity.DeviceToken", b =>
@@ -940,6 +1221,20 @@ namespace zogo.Infrastructure.Persistence.Migrations
                             Code = "INACTIVE",
                             IsActive = true,
                             Name = "Inactive"
+                        },
+                        new
+                        {
+                            Id = (short)9,
+                            Code = "CHANGES_REQUESTED",
+                            IsActive = true,
+                            Name = "Changes Requested"
+                        },
+                        new
+                        {
+                            Id = (short)10,
+                            Code = "REJECTED",
+                            IsActive = true,
+                            Name = "Rejected"
                         });
                 });
 
@@ -1021,6 +1316,119 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ViewTypes", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Notification.AgentNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("Id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<Guid>("AgentProfileId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("AgentProfileId");
+
+                    b.Property<Guid>("BuyerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("BuyerId");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsRead");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("Message");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("PropertyId");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("Title");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentProfileId");
+
+                    b.HasIndex("BuyerId");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("AgentProfileId", "PropertyId", "BuyerId");
+
+                    b.ToTable("AgentNotifications", (string)null);
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Notification.UserNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReferenceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ReferenceType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "IsRead");
+
+                    b.ToTable("UserNotifications", (string)null);
                 });
 
             modelBuilder.Entity("zogo.Domain.Entities.Property.ApartmentDetails", b =>
@@ -1400,6 +1808,44 @@ namespace zogo.Infrastructure.Persistence.Migrations
                     b.ToTable("PropertyMedia", (string)null);
                 });
 
+            modelBuilder.Entity("zogo.Domain.Entities.Agent.AgentDistrict", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Agent.AgentProfile", "AgentProfile")
+                        .WithMany("AgentDistricts")
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Master.District", "District")
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AgentProfile");
+
+                    b.Navigation("District");
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Agent.AgentProfile", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Master.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("zogo.Domain.Entities.Buyer.BuyerPropertyInteraction", b =>
                 {
                     b.HasOne("zogo.Domain.Entities.Identity.User", "Buyer")
@@ -1451,6 +1897,92 @@ namespace zogo.Infrastructure.Persistence.Migrations
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.PropertyOffer", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "Buyer")
+                        .WithMany()
+                        .HasForeignKey("BuyerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Master.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.PropertyTransaction", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "Buyer")
+                        .WithMany()
+                        .HasForeignKey("BuyerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Buyer.PropertyOffer", "Offer")
+                        .WithMany()
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("zogo.Domain.Entities.Master.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "Seller")
+                        .WithMany()
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Offer");
+
+                    b.Navigation("Property");
+
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Buyer.PropertyVisit", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "AssignedAgent")
+                        .WithMany()
+                        .HasForeignKey("AssignedAgentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "Buyer")
+                        .WithMany()
+                        .HasForeignKey("BuyerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Master.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AssignedAgent");
 
                     b.Navigation("Buyer");
 
@@ -1576,6 +2108,44 @@ namespace zogo.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
                 });
 
+            modelBuilder.Entity("zogo.Domain.Entities.Notification.AgentNotification", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Agent.AgentProfile", "AgentProfile")
+                        .WithMany()
+                        .HasForeignKey("AgentProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "Buyer")
+                        .WithMany()
+                        .HasForeignKey("BuyerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("zogo.Domain.Entities.Master.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AgentProfile");
+
+                    b.Navigation("Buyer");
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Notification.UserNotification", b =>
+                {
+                    b.HasOne("zogo.Domain.Entities.Identity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("zogo.Domain.Entities.Property.ApartmentDetails", b =>
                 {
                     b.HasOne("zogo.Domain.Entities.Master.ApartmentType", null)
@@ -1667,6 +2237,11 @@ namespace zogo.Infrastructure.Persistence.Migrations
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("zogo.Domain.Entities.Agent.AgentProfile", b =>
+                {
+                    b.Navigation("AgentDistricts");
                 });
 
             modelBuilder.Entity("zogo.Domain.Entities.Identity.Role", b =>

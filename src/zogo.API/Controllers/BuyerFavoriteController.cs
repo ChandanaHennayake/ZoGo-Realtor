@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zogo.Application.Common;
@@ -101,5 +101,24 @@ public sealed class BuyerFavoriteController : ControllerBase
             cancellationToken);
 
         return Ok(ApiResponse<IReadOnlyList<GetPropertyResponse>>.Ok(result));
+    }
+
+    [HttpGet("{propertyId:guid}")]
+    public async Task<IActionResult> CheckFavorite(
+        Guid propertyId,
+        CancellationToken cancellationToken)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("sub");
+
+        if (!Guid.TryParse(userIdClaim, out var userId))
+            return Unauthorized();
+
+        var isFavorite = await _favoriteService.IsFavoriteAsync(
+            userId,
+            propertyId,
+            cancellationToken);
+
+        return Ok(new { isFavorite });
     }
 }

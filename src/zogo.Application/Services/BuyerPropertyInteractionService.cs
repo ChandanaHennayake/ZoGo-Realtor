@@ -1,4 +1,4 @@
-using zogo.Application.DTOs.Buyer;
+﻿using zogo.Application.DTOs.Buyer;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Buyer;
@@ -41,6 +41,13 @@ public sealed class BuyerPropertyInteractionService : IBuyerPropertyInteractionS
                 nameof(currentStatus));
         }
 
+        // STEP 11: Buyer must NOT mark visited (3)
+        if (currentStatus == (short)BuyerPropertyInteractionStatus.Visited)
+        {
+            throw new InvalidOperationException(
+                "Buyers cannot mark properties as visited. Only an assigned agent can mark a visit as completed.");
+        }
+
         var property = await _propertyRepository.GetByIdAsync(propertyId, cancellationToken);
         if (property is null)
             throw new KeyNotFoundException("Property not found.");
@@ -49,18 +56,102 @@ public sealed class BuyerPropertyInteractionService : IBuyerPropertyInteractionS
             throw new InvalidOperationException("Property is not available for buyer viewing.");
 
         var existing = await _interactionRepository.GetAsync(buyerId, propertyId, cancellationToken);
-        if (existing is not null)
+
+        if (existing is null)
         {
-            existing.UpdateCurrentStatus(currentStatus);
+            // Initial interaction must be 1 (INTERESTED)
+            if (currentStatus != (short)BuyerPropertyInteractionStatus.Interested)
+            {
+                throw new InvalidOperationException(
+                    $"Initial interaction status must be 1 (INTERESTED). Cannot set status to {currentStatus}.");
+            }
+
+            var interaction = BuyerPropertyInteraction.Create(propertyId, buyerId, currentStatus);
+            await _interactionRepository.AddAsync(interaction, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return MapToResponse(interaction);
+        }
+
+        // Idempotent update
+        if (existing.CurrentStatus == currentStatus)
+        {
             return MapToResponse(existing);
         }
 
-        var interaction = BuyerPropertyInteraction.Create(propertyId, buyerId, currentStatus);
-        await _interactionRepository.AddAsync(interaction, cancellationToken);
+        // STEP 8: Buyer visit request (1 -> 2)
+        if (currentStatus == (short)BuyerPropertyInteractionStatus.VisitRequested)
+        {
+            if (existing.CurrentStatus != (short)BuyerPropertyInteractionStatus.Interested)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot request a visit. Current status must be 1 (INTERESTED), but is {existing.CurrentStatus}.");
+            }
+        }
+        // STEP 12 & 15: Document request (3 -> 4)
+        else if (currentStatus == (short)BuyerPropertyInteractionStatus.DocumentsRequested)
+        {
+            if (existing.CurrentStatus != (short)BuyerPropertyInteractionStatus.Visited)
+            {
+                throw new InvalidOperationException(
+                    $"Documents can only be requested after the property has been visited (current status must be 3 - VISITED), but is {existing.CurrentStatus}.");
+            }
+        }
+        else if (currentStatus == (short)BuyerPropertyInteractionStatus.NotInterested)
+        {
+            // Allowed to mark not interested from any active status
+        }
+        else if (currentStatus == (short)BuyerPropertyInteractionStatus.Interested)
+        {
+            // Can reset to interested
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                $"Invalid status transition from {existing.CurrentStatus} to {currentStatus}.");
+        }
+
+        existing.UpdateCurrentStatus(currentStatus);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return MapToResponse(interaction);
+        return MapToResponse(existing);
+    }
+
+    public async Task<BuyerPropertyInteractionResponse> RequestDocumentsAsync(
+        Guid buyerId,
+        Guid propertyId,
+        CancellationToken cancellationToken = default)
+    {
+        if (buyerId == Guid.Empty)
+            throw new ArgumentException("Buyer ID is required.", nameof(buyerId));
+
+        if (propertyId == Guid.Empty)
+            throw new ArgumentException("Property ID is required.", nameof(propertyId));
+
+        var property = await _propertyRepository.GetByIdAsync(propertyId, cancellationToken);
+        if (property is null)
+            throw new KeyNotFoundException("Property not found.");
+
+        if (property.Status != 2)
+            throw new InvalidOperationException("Property is not available for buyer viewing.");
+
+        var existing = await _interactionRepository.GetAsync(buyerId, propertyId, cancellationToken);
+        if (existing is null)
+        {
+            throw new InvalidOperationException(
+                "Documents can only be requested after the property has been visited (current status must be 3 - VISITED). No interaction exists.");
+        }
+
+        if (existing.CurrentStatus != (short)BuyerPropertyInteractionStatus.Visited)
+        {
+            throw new InvalidOperationException(
+                $"Documents can only be requested after the property has been visited (current status must be 3 - VISITED), but current status is {existing.CurrentStatus}.");
+        }
+
+        existing.UpdateCurrentStatus((short)BuyerPropertyInteractionStatus.DocumentsRequested);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return MapToResponse(existing);
     }
 
     public async Task<BuyerPropertyInteractionResponse?> GetInteractionAsync(

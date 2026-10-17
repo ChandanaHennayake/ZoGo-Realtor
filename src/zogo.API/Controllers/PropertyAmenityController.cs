@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using zogo.Application.DTOs.Properties.PropertyAmenity;
@@ -9,7 +9,7 @@ namespace zogo.API.Controllers;
 
 [ApiController]
 [Route("api/v1/properties/{propertyId:guid}/amenities")]
-[Authorize(Roles = "SEL")]
+[Authorize]
 public class PropertyAmenityController : ControllerBase
 {
     private readonly IPropertyAmenityService _propertyAmenityService;

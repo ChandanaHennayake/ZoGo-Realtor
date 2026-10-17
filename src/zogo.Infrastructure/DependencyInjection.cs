@@ -41,6 +41,15 @@ public static class DependencyInjection
         services.AddScoped<IFavoriteRepository, FavoriteRepository>();
         services.AddScoped<IPropertyInterestRepository, PropertyInterestRepository>();
         services.AddScoped<IBuyerPropertyInteractionRepository, BuyerPropertyInteractionRepository>();
+        services.AddScoped<IBuyerPropertyRepository, BuyerPropertyRepository>();
+
+        services.AddScoped<IAgentRepository, AgentRepository>();
+        services.AddScoped<IAgentNotificationRepository, AgentNotificationRepository>();
+        services.AddScoped<IAdminPropertyRepository, AdminPropertyRepository>();
+        services.AddScoped<IPropertyVisitRepository, PropertyVisitRepository>();
+        services.AddScoped<IPropertyOfferRepository, PropertyOfferRepository>();
+        services.AddScoped<IPropertyTransactionRepository, PropertyTransactionRepository>();
+        services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
 
         return services;
     }

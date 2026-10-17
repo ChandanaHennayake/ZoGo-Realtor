@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zogo.Application.DTOs.Properties;
@@ -8,7 +8,7 @@ namespace zogo.API.Controllers;
 
 [ApiController]
 [Route("api/v1/properties/{propertyId:guid}/apartment-details")]
-[Authorize(Roles = "SEL")]
+[Authorize]
 
 public sealed class ApartmentDetailsController : ControllerBase
 {

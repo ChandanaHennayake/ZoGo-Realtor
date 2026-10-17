@@ -8,7 +8,7 @@ namespace zogo.API.Controllers;
 
 [ApiController]
 [Route("api/v1/properties/{propertyId:guid}/documents")]
-[Authorize(Roles = "SEL")]
+[Authorize]
 public class PropertyDocumentController : ControllerBase
 {
     private readonly IPropertyDocumentService _propertyDocumentService;

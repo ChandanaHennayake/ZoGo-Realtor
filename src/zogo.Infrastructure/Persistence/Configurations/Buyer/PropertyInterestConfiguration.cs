@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using zogo.Domain.Entities.Buyer;
 
@@ -49,6 +49,8 @@ public class PropertyInterestConfiguration : IEntityTypeConfiguration<PropertyIn
 
         builder.HasIndex(x => x.PropertyId);
 
+        builder.HasIndex(x => x.Status);
+
         builder.HasOne(x => x.Property)
             .WithMany()
             .HasForeignKey(x => x.PropertyId)
@@ -60,3 +62,4 @@ public class PropertyInterestConfiguration : IEntityTypeConfiguration<PropertyIn
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
+

@@ -1,0 +1,73 @@
+================================================================================
+ZoGo Realtor — Master Implementation Plan & Execution Roadmap
+================================================================================
+
+PHASE 1: Property Approval Workflow & Admin Core (Immediate Priority)
+--------------------------------------------------------------------------------
+1.1 Backend Domain & Status Refactor
+    - Standardize Property Statuses:
+      1: DRAFT
+      2: SUBMITTED
+      3: UNDER_REVIEW
+      4: CHANGES_REQUESTED
+      5: APPROVED
+      6: PUBLISHED
+      7: REJECTED
+      8: SOLD
+      9: INACTIVE / SUSPENDED
+    - Implement domain methods in Property.cs for state transitions with audit logs.
+
+1.2 Backend Admin Property Review API
+    - Controller: AdminPropertyController.cs (Route: api/v1/admin/properties, Roles: ADM, Admin)
+    - Endpoints:
+      * GET /pending (list properties waiting for approval)
+      * GET /{id}/review-details (full bundle: specs, media, legal docs, deeds)
+      * PUT /{id}/start-review (status -> UNDER_REVIEW)
+      * PUT /{id}/approve (status -> APPROVED / PUBLISHED)
+      * PUT /{id}/request-changes (status -> CHANGES_REQUESTED with admin feedback notes)
+      * PUT /{id}/reject (status -> REJECTED with mandatory reason)
+      * PUT /{id}/assign-agent (assign designated agent for district)
+
+1.3 Update Seller Property Submission in Backend
+    - Replace direct publish with POST /api/v1/properties/{id}/submit
+    - Validate completeness before allowing submission.
+
+1.4 Scaffold Admin Web Portal (Web/admin-portal)
+    - Admin Login Screen (JWT auth, ADM role check)
+    - Admin Dashboard shell with responsive sidebar & topbar
+    - Property Approvals module (Queue table with status tabs)
+    - Review detail drawer (Photos, deeds, legal docs, map location)
+    - Action dialogs: Approve, Request Changes, Reject
+
+1.5 Mobile App Alignment (Flutter)
+    - Change Seller listing completion button to "Submit for Review"
+    - Display status badges (Draft, Submitted, Under Review, Changes Requested, Published)
+    - Display Admin feedback comments for "Changes Requested" with "Update & Resubmit"
+
+--------------------------------------------------------------------------------
+PHASE 2: Admin Master Data & Agent Management
+--------------------------------------------------------------------------------
+2.1 Admin Agent Management UI & backend linkage (Create Agent, District allocation)
+2.2 Admin Master Data CRUD (Provinces, Districts, Cities, Amenities, Property Types)
+
+--------------------------------------------------------------------------------
+PHASE 3: Visits & Leads Management
+--------------------------------------------------------------------------------
+3.1 Visits Entity, Repository & API (Schedule, Confirm, Reschedule, Outcome notes)
+3.2 Mobile Buyer visit booking bottom sheet
+3.3 Admin & Agent visits calendar view
+
+--------------------------------------------------------------------------------
+PHASE 4: Offers, Negotiations & Transaction Engine
+--------------------------------------------------------------------------------
+4.1 Offer Entity & API (Make offer, Counteroffer history, Accept, Reject)
+4.2 Mobile Negotiation timeline & counteroffer card
+4.3 Transaction pipeline (Initiated -> Documentation -> Sold status)
+
+--------------------------------------------------------------------------------
+PHASE 5: Live Notifications, Chat & Maps
+--------------------------------------------------------------------------------
+5.1 SignalR messaging hub for live chat
+5.2 Push notifications (FCM)
+5.3 Google Maps integration with pins and radius search
+================================================================================

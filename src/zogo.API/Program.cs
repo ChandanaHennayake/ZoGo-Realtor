@@ -23,9 +23,20 @@ builder.Host.UseSerilog((context, services, configuration) =>
         .WriteTo.Console());
 
 // ------------------------------------------------------------
-// Controllers
+// Controllers & CORS
 // ------------------------------------------------------------
 builder.Services.AddControllers();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.SetIsOriginAllowed(_ => true)
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
 
 // ------------------------------------------------------------
 // Application
@@ -128,9 +139,9 @@ if (app.Environment.IsDevelopment())
 }
 
 // ------------------------------------------------------------
-// HTTPS
+// HTTPS & CORS
 // ------------------------------------------------------------
-app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 
 // ------------------------------------------------------------
 // Authentication MUST come before Authorization

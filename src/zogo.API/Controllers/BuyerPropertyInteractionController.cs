@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zogo.Application.Common;
@@ -25,16 +25,14 @@ public sealed class BuyerPropertyInteractionController : ControllerBase
         [FromBody] BuyerPropertyInteractionRequest request,
         CancellationToken cancellationToken)
     {
-        var buyerIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? User.FindFirstValue("sub");
-
-        if (!Guid.TryParse(buyerIdClaim, out var buyerId))
+        var buyerId = GetUserId();
+        if (buyerId is null)
             return Unauthorized();
 
         try
         {
             var result = await _interactionService.SetInteractionStatusAsync(
-                buyerId,
+                buyerId.Value,
                 propertyId,
                 request.Status,
                 cancellationToken);
@@ -61,16 +59,14 @@ public sealed class BuyerPropertyInteractionController : ControllerBase
         [FromBody] BuyerPropertyInteractionRequest request,
         CancellationToken cancellationToken)
     {
-        var buyerIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? User.FindFirstValue("sub");
-
-        if (!Guid.TryParse(buyerIdClaim, out var buyerId))
+        var buyerId = GetUserId();
+        if (buyerId is null)
             return Unauthorized();
 
         try
         {
             var result = await _interactionService.SetInteractionStatusAsync(
-                buyerId,
+                buyerId.Value,
                 propertyId,
                 request.Status,
                 cancellationToken);
@@ -91,19 +87,49 @@ public sealed class BuyerPropertyInteractionController : ControllerBase
         }
     }
 
+    [HttpPut("{propertyId:guid}/documents-request")]
+    public async Task<IActionResult> RequestDocuments(
+        Guid propertyId,
+        CancellationToken cancellationToken)
+    {
+        var buyerId = GetUserId();
+        if (buyerId is null)
+            return Unauthorized();
+
+        try
+        {
+            var result = await _interactionService.RequestDocumentsAsync(
+                buyerId.Value,
+                propertyId,
+                cancellationToken);
+
+            return Ok(ApiResponse<BuyerPropertyInteractionResponse>.Ok(result, "Documents requested successfully."));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ApiResponse.Fail(ex.Message));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse.Fail(ex.Message));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ApiResponse.Fail(ex.Message));
+        }
+    }
+
     [HttpGet("{propertyId:guid}")]
     public async Task<IActionResult> GetInteractionStatus(
         Guid propertyId,
         CancellationToken cancellationToken)
     {
-        var buyerIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? User.FindFirstValue("sub");
-
-        if (!Guid.TryParse(buyerIdClaim, out var buyerId))
+        var buyerId = GetUserId();
+        if (buyerId is null)
             return Unauthorized();
 
         var result = await _interactionService.GetInteractionAsync(
-            buyerId,
+            buyerId.Value,
             propertyId,
             cancellationToken);
 
@@ -111,5 +137,16 @@ public sealed class BuyerPropertyInteractionController : ControllerBase
             return NotFound(ApiResponse.Fail("No interaction recorded for this property."));
 
         return Ok(ApiResponse<BuyerPropertyInteractionResponse>.Ok(result));
+    }
+
+    private Guid? GetUserId()
+    {
+        var userIdClaim =
+            User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("sub");
+
+        return Guid.TryParse(userIdClaim, out var userId)
+            ? userId
+            : null;
     }
 }

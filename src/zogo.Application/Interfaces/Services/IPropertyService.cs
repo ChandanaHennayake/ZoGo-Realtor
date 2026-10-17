@@ -22,6 +22,8 @@ public interface IPropertyService
 
     Task<bool> PublishAsync(Guid userId, Guid propertyId, CancellationToken cancellationToken = default);
 
+    Task<bool> SubmitAsync(Guid userId, Guid propertyId, CancellationToken cancellationToken = default);
+
     Task<bool> UpdateAsync(
     Guid userId,
     Guid propertyId,

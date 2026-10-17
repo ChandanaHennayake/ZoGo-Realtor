@@ -1,4 +1,4 @@
-﻿namespace zogo.Domain.Entities.Master;
+namespace zogo.Domain.Entities.Master;
 
 public class Property
 {
@@ -289,6 +289,14 @@ public class Property
 
         Status = status;
 
+        UpdatedBy = changedBy;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void MarkSold(Guid changedBy)
+    {
+        Status = 5; // SOLD
+        SoldAt = DateTime.UtcNow;
         UpdatedBy = changedBy;
         UpdatedAt = DateTime.UtcNow;
     }

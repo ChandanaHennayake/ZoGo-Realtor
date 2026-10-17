@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Common;
+using zogo.Application.DTOs.Common;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 
@@ -281,7 +281,9 @@ public class CommonService : ICommonService
         new() { Id = 5, Code = "SOLD", Name = "Sold" },
         new() { Id = 6, Code = "RENTED", Name = "Rented" },
         new() { Id = 7, Code = "SUSPENDED", Name = "Suspended" },
-        new() { Id = 8, Code = "INACTIVE", Name = "Inactive" }
+        new() { Id = 8, Code = "INACTIVE", Name = "Inactive" },
+        new() { Id = 9, Code = "CHANGES_REQUESTED", Name = "Changes Requested" },
+        new() { Id = 10, Code = "REJECTED", Name = "Rejected" }
     };
 
     public Task<IReadOnlyList<PropertyStatusResponse>> GetPropertyStatusesAsync(

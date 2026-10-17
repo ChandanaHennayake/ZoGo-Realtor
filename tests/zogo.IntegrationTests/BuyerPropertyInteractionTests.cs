@@ -248,19 +248,35 @@ public class BuyerPropertyInteractionTests : IClassFixture<WebApplicationFactory
         Assert.Equal(2, updateResult1.Data.CurrentStatus);
         Assert.Equal("VISIT_REQUESTED", updateResult1.Data.CurrentStatusName);
 
-        // 3. Update to VISITED (3)
+        // 3. Buyer cannot mark VISITED (3) -> Must return BadRequest
         var updateRequest2 = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/buyer/property-interactions/{published.Id}")
         {
             Content = JsonContent.Create(new { status = 3 })
         };
         updateRequest2.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var updateResponse2 = await _client.SendAsync(updateRequest2);
-        Assert.Equal(HttpStatusCode.OK, updateResponse2.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, updateResponse2.StatusCode);
 
-        var updateResult2 = await updateResponse2.Content.ReadFromJsonAsync<ApiResponse<BuyerPropertyInteractionResponse>>();
-        Assert.NotNull(updateResult2?.Data);
-        Assert.Equal(3, updateResult2.Data.CurrentStatus);
-        Assert.Equal("VISITED", updateResult2.Data.CurrentStatusName);
+        // Seed Agent for District 1
+        var agentUser = User.Create("Agent", "Smith", $"agent_{Guid.NewGuid():N}@example.com");
+        var agentProfile = zogo.Domain.Entities.Agent.AgentProfile.Create(agentUser.Id, 1);
+        var agentDistrict = zogo.Domain.Entities.Agent.AgentDistrict.Create(agentProfile.Id, 1);
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            await db.Users.AddAsync(agentUser);
+            await db.AgentProfiles.AddAsync(agentProfile);
+            await db.AgentDistricts.AddAsync(agentDistrict);
+            await db.SaveChangesAsync();
+        }
+
+        var agentToken = GenerateToken(agentUser.Id, agentUser.Email, "AGT");
+
+        // Agent marks visited
+        var markVisitedReq = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/agent/properties/{published.Id}/visit");
+        markVisitedReq.Headers.Authorization = new AuthenticationHeaderValue("Bearer", agentToken);
+        var markVisitedRes = await _client.SendAsync(markVisitedReq);
+        Assert.Equal(HttpStatusCode.OK, markVisitedRes.StatusCode);
 
         // Verify only 1 row exists in DB
         using (var scope = _factory.Services.CreateScope())

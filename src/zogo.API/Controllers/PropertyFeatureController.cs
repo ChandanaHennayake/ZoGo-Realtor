@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zogo.Application.DTOs.Property.PropertyFeature;
@@ -8,7 +8,7 @@ namespace zogo.API.Controllers;
 
 [ApiController]
 [Route("api/v1/properties/{propertyId:guid}/features")]
-[Authorize(Roles = "SEL")]
+[Authorize]
 public class PropertyFeatureController : ControllerBase
 {
     private readonly IPropertyFeatureService _propertyFeatureService;

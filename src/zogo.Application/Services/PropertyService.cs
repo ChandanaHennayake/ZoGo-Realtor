@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Properties;
+using zogo.Application.DTOs.Properties;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Master;
@@ -289,6 +289,28 @@ public sealed class PropertyService : IPropertyService
         return true;
     }
 
+    public async Task<bool> SubmitAsync(
+        Guid userId,
+        Guid propertyId,
+        CancellationToken cancellationToken = default)
+    {
+        var property = await _propertyRepository.GetByIdAsync(
+            propertyId,
+            cancellationToken);
+
+        if (property is null || property.DeletedAt.HasValue)
+            return false;
+
+        if (property.OwnerUserId != userId)
+            throw new UnauthorizedAccessException(
+                "You are not authorized to submit this property.");
+
+        // Status 4 = PENDING_APPROVAL
+        property.ChangeStatus(4, userId);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
     public async Task<bool> UpdateAsync(
         Guid userId,
         Guid propertyId,
@@ -395,6 +417,8 @@ public sealed class PropertyService : IPropertyService
         6 => "Rented",
         7 => "Suspended",
         8 => "Inactive",
+        9 => "Changes Requested",
+        10 => "Rejected",
         _ => $"Status #{status}"
     };
 }

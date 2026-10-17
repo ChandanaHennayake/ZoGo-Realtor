@@ -33,6 +33,16 @@ public static class DependencyInjection
         services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<IPropertyInterestService, PropertyInterestService>();
         services.AddScoped<IBuyerPropertyInteractionService, BuyerPropertyInteractionService>();
+        services.AddScoped<IBuyerPropertyService, BuyerPropertyService>();
+
+        services.AddScoped<IAdminAgentService, AdminAgentService>();
+        services.AddScoped<IAdminPropertyService, AdminPropertyService>();
+        services.AddScoped<IAgentService, AgentService>();
+        services.AddScoped<IAgentNotificationService, AgentNotificationService>();
+        services.AddScoped<IPropertyVisitService, PropertyVisitService>();
+        services.AddScoped<IPropertyOfferService, PropertyOfferService>();
+        services.AddScoped<IPropertyTransactionService, PropertyTransactionService>();
+        services.AddScoped<IUserNotificationService, UserNotificationService>();
 
         return services;
     }

@@ -8,7 +8,7 @@ namespace zogo.API.Controllers;
 
 [ApiController]
 [Route("api/v1/properties")]
-//[Authorize(Roles = "SEL")]
+[Authorize]
 public sealed class PropertyController : ControllerBase
 {
     private readonly IPropertyService _propertyService;
@@ -108,6 +108,31 @@ public sealed class PropertyController : ControllerBase
             return NotFound();
 
         return Ok(new { message = "Property published successfully" });
+    }
+
+    [HttpPost("{propertyId:guid}/submit")]
+    public async Task<IActionResult> Submit(
+        Guid propertyId,
+        CancellationToken cancellationToken)
+    {
+        var userIdClaim =
+            User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? User.FindFirstValue("sub");
+
+        if (!Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var submitted = await _propertyService.SubmitAsync(
+            userId,
+            propertyId,
+            cancellationToken);
+
+        if (!submitted)
+            return NotFound();
+
+        return Ok(new { message = "Property submitted for approval successfully" });
     }
 
     [HttpPut("{propertyId:guid}")]

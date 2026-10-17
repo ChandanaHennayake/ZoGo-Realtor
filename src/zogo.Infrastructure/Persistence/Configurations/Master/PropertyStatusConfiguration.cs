@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using zogo.Domain.Entities.Master;
 
@@ -34,7 +34,9 @@ public sealed class PropertyStatusConfiguration : IEntityTypeConfiguration<Prope
             new PropertyStatus { Id = 5, Code = "SOLD", Name = "Sold", IsActive = true },
             new PropertyStatus { Id = 6, Code = "RENTED", Name = "Rented", IsActive = true },
             new PropertyStatus { Id = 7, Code = "SUSPENDED", Name = "Suspended", IsActive = true },
-            new PropertyStatus { Id = 8, Code = "INACTIVE", Name = "Inactive", IsActive = true }
+            new PropertyStatus { Id = 8, Code = "INACTIVE", Name = "Inactive", IsActive = true },
+            new PropertyStatus { Id = 9, Code = "CHANGES_REQUESTED", Name = "Changes Requested", IsActive = true },
+            new PropertyStatus { Id = 10, Code = "REJECTED", Name = "Rejected", IsActive = true }
         );
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zogo.Application.DTOs.Property.PropertyMedia;
@@ -8,7 +8,7 @@ namespace zogo.API.Controllers;
 
 [ApiController]
 [Route("api/v1/properties/{propertyId:guid}/media")]
-[Authorize(Roles = "SEL")]
+[Authorize]
 public class PropertyMediaController : ControllerBase
 {
     private readonly IPropertyMediaService _propertyMediaService;

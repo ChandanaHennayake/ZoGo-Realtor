@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using zogo.Application.DTOs.Authentication;
 using zogo.Application.Interfaces.Services;
 
@@ -43,12 +43,19 @@ public sealed class AuthController : ControllerBase
      [FromBody] LoginRequest request,
      CancellationToken cancellationToken)
     {
-        var response =
-            await _authenticationService.LoginAsync(
-                request,
-                cancellationToken);
+        try
+        {
+            var response =
+                await _authenticationService.LoginAsync(
+                    request,
+                    cancellationToken);
 
-        return Ok(response);
+            return Ok(response);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
     }
 
 

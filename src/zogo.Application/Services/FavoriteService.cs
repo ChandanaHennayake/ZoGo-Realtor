@@ -1,4 +1,4 @@
-using zogo.Application.DTOs.Properties;
+﻿using zogo.Application.DTOs.Properties;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Buyer;
@@ -82,6 +82,17 @@ public sealed class FavoriteService : IFavoriteService
         var properties = await _favoriteRepository.GetFavoritePropertiesByUserIdAsync(userId, cancellationToken);
 
         return properties.Select(MapToResponse).ToList();
+    }
+
+    public async Task<bool> IsFavoriteAsync(
+        Guid userId,
+        Guid propertyId,
+        CancellationToken cancellationToken = default)
+    {
+        if (userId == Guid.Empty || propertyId == Guid.Empty)
+            return false;
+
+        return await _favoriteRepository.ExistsAsync(userId, propertyId, cancellationToken);
     }
 
     private static GetPropertyResponse MapToResponse(Property property)
