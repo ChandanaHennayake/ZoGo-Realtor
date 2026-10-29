@@ -50,11 +50,15 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<Condominium> Condominiums => Set<Condominium>();
     public DbSet<ApartmentType> ApartmentTypes => Set<ApartmentType>();
     public DbSet<FurnishingType> FurnishingTypes => Set<FurnishingType>();
+    public DbSet<ViewType> ViewTypes => Set<ViewType>();
 
     public DbSet<ApartmentDetails> ApartmentDetails => Set<ApartmentDetails>();
 
     public DbSet<PropertyFinancials> PropertyFinancials => Set<PropertyFinancials>();
     public DbSet<PropertyLegalDetails> PropertyLegalDetails => Set<PropertyLegalDetails>();
+
+    public DbSet<DocumentType> DocumentTypes => Set<DocumentType>();
+    public DbSet<OwnershipType> OwnershipTypes => Set<OwnershipType>();
 
     public DbSet<Feature> Features => Set<Feature>();
 
@@ -86,6 +90,7 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<AgentDistrict> AgentDistricts => Set<AgentDistrict>();
     public DbSet<AgentNotification> AgentNotifications => Set<AgentNotification>();
     public DbSet<UserNotification> UserNotifications => Set<UserNotification>();
+    public DbSet<SystemConfiguration> SystemConfigurations => Set<SystemConfiguration>();
 
     protected override void OnConfiguring(
         DbContextOptionsBuilder optionsBuilder)

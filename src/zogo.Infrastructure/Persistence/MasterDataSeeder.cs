@@ -163,6 +163,32 @@ public static class MasterDataSeeder
                 });
                 await context.SaveChangesAsync();
             }
+
+            // Ensure SystemConfigurations table exists and has initial reference sequence
+            await context.Database.ExecuteSqlRawAsync(@"
+                CREATE TABLE IF NOT EXISTS ""SystemConfigurations"" (
+                    ""Id"" SERIAL PRIMARY KEY,
+                    ""ConfigKey"" VARCHAR(100) NOT NULL UNIQUE,
+                    ""ConfigValue"" VARCHAR(500) NOT NULL,
+                    ""Description"" VARCHAR(250),
+                    ""UpdatedAt"" TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                );
+            ");
+
+            var todayStr = DateTime.UtcNow.ToString("yyyyMMdd");
+            var refSeqConfig = await context.SystemConfigurations.FirstOrDefaultAsync(c => c.ConfigKey == "PROPERTY_REFERENCE_SEQUENCE");
+            if (refSeqConfig == null)
+            {
+                var initialConfig = new SystemConfiguration
+                {
+                    ConfigKey = "PROPERTY_REFERENCE_SEQUENCE",
+                    ConfigValue = $"{todayStr}:0",
+                    Description = "Daily auto-incrementing reference number sequence for ZOGO listings",
+                    UpdatedAt = DateTime.UtcNow
+                };
+                await context.SystemConfigurations.AddAsync(initialConfig);
+                await context.SaveChangesAsync();
+            }
         }
         catch (Exception ex)
         {

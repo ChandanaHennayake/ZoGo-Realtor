@@ -172,9 +172,19 @@ public class CommonService : ICommonService
         _commonRepository = commonRepository;
     }
 
-    public Task<IReadOnlyList<ProvinceResponse>> GetProvincesAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<ProvinceResponse>> GetProvincesAsync(CancellationToken cancellationToken = default)
     {
-        return Task.FromResult<IReadOnlyList<ProvinceResponse>>(StaticProvinces);
+        var dbProvinces = await _commonRepository.GetProvincesAsync(cancellationToken);
+        if (dbProvinces.Count > 0)
+        {
+            return dbProvinces.Select(p => new ProvinceResponse
+            {
+                Id = p.Id,
+                Code = p.Code,
+                Name = p.Name
+            }).ToList();
+        }
+        return StaticProvinces;
     }
 
     public async Task<IReadOnlyList<DistrictResponse>> GetDistrictsAsync(
@@ -290,6 +300,140 @@ public class CommonService : ICommonService
         CancellationToken cancellationToken = default)
     {
         return Task.FromResult(DefaultPropertyStatuses);
+    }
+
+    public async Task<IReadOnlyList<PropertyTypeResponse>> GetPropertyTypesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetPropertyTypesAsync(cancellationToken);
+        return list.Select(pt => new PropertyTypeResponse
+        {
+            Id = pt.Id,
+            Code = pt.Code,
+            Name = pt.Name
+        }).ToList();
+    }
+
+    public async Task<IReadOnlyList<ListingTypeResponse>> GetListingTypesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetListingTypesAsync(cancellationToken);
+        return list.Select(lt => new ListingTypeResponse
+        {
+            Id = lt.Id,
+            Code = lt.Code,
+            Name = lt.Name
+        }).ToList();
+    }
+
+    public async Task<IReadOnlyList<ApartmentTypeResponse>> GetApartmentTypesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetApartmentTypesAsync(cancellationToken);
+        return list.Select(at => new ApartmentTypeResponse
+        {
+            Id = at.Id,
+            Code = at.Code,
+            Name = at.Name
+        }).ToList();
+    }
+
+    public async Task<IReadOnlyList<FurnishingTypeResponse>> GetFurnishingTypesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetFurnishingTypesAsync(cancellationToken);
+        return list.Select(ft => new FurnishingTypeResponse
+        {
+            Id = ft.Id,
+            Code = ft.Code,
+            Name = ft.Name
+        }).ToList();
+    }
+
+    public async Task<IReadOnlyList<ViewTypeResponse>> GetViewTypesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetViewTypesAsync(cancellationToken);
+        return list.Select(vt => new ViewTypeResponse
+        {
+            Id = vt.Id,
+            Code = vt.Code,
+            Name = vt.Name
+        }).ToList();
+    }
+
+    public async Task<IReadOnlyList<CondominiumResponse>> GetCondominiumsAsync(
+        short? districtId = null,
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetCondominiumsAsync(districtId, cancellationToken);
+        return list.Select(c => new CondominiumResponse
+        {
+            Id = c.Id,
+            Name = c.Name,
+            Address = c.Address,
+            DistrictId = c.DistrictId,
+            DeveloperName = c.DeveloperName,
+            TotalFloors = c.TotalFloors,
+            Latitude = c.Latitude,
+            Longitude = c.Longitude
+        }).ToList();
+    }
+
+    public async Task<IReadOnlyList<AmenityMasterResponse>> GetAmenitiesAsync(
+        string? category = null,
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetAmenitiesAsync(category, cancellationToken);
+        return list.Select(a => new AmenityMasterResponse
+        {
+            Id = a.Id,
+            Code = a.Code,
+            Name = a.Name,
+            Category = a.Category,
+            DisplayOrder = a.DisplayOrder
+        }).ToList();
+    }
+
+    public async Task<IReadOnlyList<FeatureMasterResponse>> GetFeaturesAsync(
+        string? category = null,
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetFeaturesAsync(category, cancellationToken);
+        return list.Select(f => new FeatureMasterResponse
+        {
+            Id = f.Id,
+            Code = f.Code,
+            Name = f.Name,
+            Category = f.Category,
+            DisplayOrder = f.DisplayOrder
+        }).ToList();
+    }
+
+    public async Task<IReadOnlyList<DocumentTypeResponse>> GetDocumentTypesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetDocumentTypesAsync(cancellationToken);
+        return list.Select(dt => new DocumentTypeResponse
+        {
+            Id = dt.Id,
+            Code = dt.Code,
+            Name = dt.Name,
+            DisplayOrder = dt.DisplayOrder
+        }).ToList();
+    }
+
+    public async Task<IReadOnlyList<OwnershipTypeResponse>> GetOwnershipTypesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var list = await _commonRepository.GetOwnershipTypesAsync(cancellationToken);
+        return list.Select(ot => new OwnershipTypeResponse
+        {
+            Id = ot.Id,
+            Code = ot.Code,
+            Name = ot.Name,
+            DisplayOrder = ot.DisplayOrder
+        }).ToList();
     }
 
     private static short ResolveProvinceId(string districtName, string districtCode)

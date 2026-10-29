@@ -50,6 +50,7 @@ public static class DependencyInjection
         services.AddScoped<IPropertyOfferRepository, PropertyOfferRepository>();
         services.AddScoped<IPropertyTransactionRepository, PropertyTransactionRepository>();
         services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
+        services.AddScoped<ISystemConfigurationRepository, SystemConfigurationRepository>();
 
         return services;
     }

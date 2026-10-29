@@ -27,4 +27,37 @@ public interface ICommonRepository
         GetGnDivisionsByDsAsync(
             int divisionalSecretariatId,
             CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<PropertyType>> GetPropertyTypesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<ListingType>> GetListingTypesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<ApartmentType>> GetApartmentTypesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<FurnishingType>> GetFurnishingTypesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<ViewType>> GetViewTypesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Condominium>> GetCondominiumsAsync(
+        short? districtId = null,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Amenity>> GetAmenitiesAsync(
+        string? category = null,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Feature>> GetFeaturesAsync(
+        string? category = null,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<DocumentType>> GetDocumentTypesAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<OwnershipType>> GetOwnershipTypesAsync(
+        CancellationToken cancellationToken = default);
 }
