@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Property.LegalDetails;
+using zogo.Application.DTOs.Property.LegalDetails;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Property;
@@ -38,12 +38,23 @@ public sealed class PropertyLegalDetailsService : IPropertyLegalDetailsService
             throw new UnauthorizedAccessException(
                 "You are not the owner of this property.");
 
-        if (await _legalDetailsRepository.ExistsAsync(
-                propertyId,
-                cancellationToken))
+        var existing = await _legalDetailsRepository
+            .GetByPropertyIdAsync(propertyId, cancellationToken);
+
+        if (existing is not null)
         {
-            throw new InvalidOperationException(
-                "Legal details already exist for this property.");
+            existing.Update(
+                request.OwnershipType,
+                request.HasMortgage,
+                request.MortgageProvider,
+                request.HasLegalIssues,
+                request.LegalIssueDescription,
+                request.LegalVerified,
+                request.VerifiedBy,
+                request.VerifiedAt);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return MapToResponse(existing);
         }
 
         var legalDetails = PropertyLegalDetails.Create(

@@ -10,17 +10,23 @@ public class PropertyDocumentService : IPropertyDocumentService
 {
     private readonly IPropertyDocumentRepository _propertyDocumentRepository;
     private readonly IPropertyRepository _propertyRepository;
+    private readonly IAgentRepository _agentRepository;
+    private readonly IBuyerPropertyInteractionRepository _interactionRepository;
     private readonly IFileStorageService _fileStorageService;
     private readonly IUnitOfWork _unitOfWork;
 
     public PropertyDocumentService(
         IPropertyDocumentRepository propertyDocumentRepository,
         IPropertyRepository propertyRepository,
+        IAgentRepository agentRepository,
+        IBuyerPropertyInteractionRepository interactionRepository,
         IFileStorageService fileStorageService,
         IUnitOfWork unitOfWork)
     {
         _propertyDocumentRepository = propertyDocumentRepository;
         _propertyRepository = propertyRepository;
+        _agentRepository = agentRepository;
+        _interactionRepository = interactionRepository;
         _fileStorageService = fileStorageService;
         _unitOfWork = unitOfWork;
     }
@@ -38,9 +44,13 @@ public class PropertyDocumentService : IPropertyDocumentService
         if (property is null || property.DeletedAt.HasValue)
             throw new KeyNotFoundException("Property not found.");
 
-        if (property.OwnerUserId != userId)
+        var isOwner = property.OwnerUserId == userId;
+        var agent = await _agentRepository.GetByUserIdAsync(userId, cancellationToken);
+        var isAgent = agent != null && agent.AgentDistricts.Any(d => d.DistrictId == property.DistrictId);
+
+        if (!isOwner && !isAgent)
             throw new UnauthorizedAccessException(
-                "You are not authorized to modify this property.");
+                "You are not authorized to upload documents for this property.");
 
         if (request.DocumentTypeId <= 0)
             throw new ArgumentException("Document type ID is required.");
@@ -81,10 +91,6 @@ public class PropertyDocumentService : IPropertyDocumentService
         if (property is null || property.DeletedAt.HasValue)
             throw new KeyNotFoundException("Property not found.");
 
-        if (property.OwnerUserId != userId)
-            throw new UnauthorizedAccessException(
-                "You are not authorized to access this property.");
-
         var document = await _propertyDocumentRepository.GetByIdAsync(
             documentId,
             cancellationToken);
@@ -106,10 +112,6 @@ public class PropertyDocumentService : IPropertyDocumentService
 
         if (property is null || property.DeletedAt.HasValue)
             throw new KeyNotFoundException("Property not found.");
-
-        if (property.OwnerUserId != userId)
-            throw new UnauthorizedAccessException(
-                "You are not authorized to access this property.");
 
         var documents = await _propertyDocumentRepository
             .GetByPropertyIdAsync(
@@ -134,7 +136,11 @@ public class PropertyDocumentService : IPropertyDocumentService
         if (property is null || property.DeletedAt.HasValue)
             throw new KeyNotFoundException("Property not found.");
 
-        if (property.OwnerUserId != userId)
+        var isOwner = property.OwnerUserId == userId;
+        var agent = await _agentRepository.GetByUserIdAsync(userId, cancellationToken);
+        var isAgent = agent != null && agent.AgentDistricts.Any(d => d.DistrictId == property.DistrictId);
+
+        if (!isOwner && !isAgent)
             throw new UnauthorizedAccessException(
                 "You are not authorized to modify this property.");
 
@@ -169,10 +175,6 @@ public class PropertyDocumentService : IPropertyDocumentService
 
         if (property is null || property.DeletedAt.HasValue)
             throw new KeyNotFoundException("Property not found.");
-
-        if (property.OwnerUserId != userId)
-            throw new UnauthorizedAccessException(
-                "You are not authorized to access this property.");
 
         var document = await _propertyDocumentRepository.GetByIdAsync(
             documentId,
@@ -212,6 +214,11 @@ public class PropertyDocumentService : IPropertyDocumentService
 
         if (document is null || document.PropertyId != propertyId)
             throw new KeyNotFoundException("Document not found.");
+
+        if (request.Status == (short)PropertyDocumentStatus.Rejected && string.IsNullOrWhiteSpace(request.RejectionReason))
+        {
+            throw new ArgumentException("A rejection reason is required when rejecting a document.");
+        }
 
         document.UpdateStatus(request.Status, userId, request.RejectionReason);
 

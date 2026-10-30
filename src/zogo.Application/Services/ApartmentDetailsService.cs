@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Properties;
+using zogo.Application.DTOs.Properties;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Property;
@@ -51,13 +51,36 @@ public sealed class ApartmentDetailsService
             throw new UnauthorizedAccessException(
                 "You do not own this property.");
 
-        var exists = await _apartmentDetailsRepository.ExistsAsync(
+        var existing = await _apartmentDetailsRepository.GetByPropertyIdAsync(
             propertyId,
             cancellationToken);
 
-        if (exists)
-            throw new InvalidOperationException(
-                "Apartment details already exist for this property.");
+        if (existing is not null)
+        {
+            existing.Update(
+                request.CondominiumId,
+                request.ApartmentTypeId,
+                request.FloorNumber,
+                request.UnitNumber,
+                request.IsCornerUnit,
+                request.FloorAreaSqFt,
+                request.Bedrooms,
+                request.MasterBedrooms,
+                request.Bathrooms,
+                request.AttachedBathrooms,
+                request.Balconies,
+                request.FurnishingTypeId,
+                request.ViewTypeId,
+                request.HasMaidRoom,
+                request.HasMaidBathroom,
+                request.HasLaundryArea,
+                request.HasStorageRoom,
+                request.HasWalkInCloset,
+                request.HasDriversRoom);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            return Map(existing);
+        }
 
         var apartmentDetails = ApartmentDetails.Create(
             propertyId,

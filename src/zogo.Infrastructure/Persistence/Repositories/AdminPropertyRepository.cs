@@ -164,22 +164,92 @@ public sealed class AdminPropertyRepository : IAdminPropertyRepository
             })
             .ToListAsync(cancellationToken);
 
-        var docs = await _context.PropertyDocuments
+        var docTypes = await _context.DocumentTypes
+            .AsNoTracking()
+            .ToDictionaryAsync(dt => dt.Id, dt => dt.Name, cancellationToken);
+
+        var rawDocs = await _context.PropertyDocuments
             .AsNoTracking()
             .Where(d => d.PropertyId == propertyId)
-            .Select(d => new AdminPropertyDocumentItem
-            {
-                DocumentId = d.Id,
-                DocumentType = d.DocumentTypeId.ToString(),
-                DocumentName = d.OriginalFileName ?? "Document",
-                DocumentUrl = $"/api/v1/properties/{propertyId}/documents/{d.Id}/download",
-                UploadedAt = d.UploadedAt
-            })
             .ToListAsync(cancellationToken);
+
+        var docs = rawDocs.Select(d => new AdminPropertyDocumentItem
+        {
+            DocumentId = d.Id,
+            DocumentType = docTypes.TryGetValue(d.DocumentTypeId, out var dtName) ? dtName : $"Type {d.DocumentTypeId}",
+            DocumentName = d.OriginalFileName ?? "Document",
+            DocumentUrl = $"/api/v1/properties/{propertyId}/documents/{d.Id}/download",
+            UploadedAt = d.UploadedAt
+        }).ToList();
 
         var apt = await _context.ApartmentDetails
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.PropertyId == propertyId, cancellationToken);
+
+        DivisionalSecretariat? ds = null;
+        if (property.DivisionalSecretariatId.HasValue)
+        {
+            ds = await _context.DivisionalSecretariats
+                .AsNoTracking()
+                .FirstOrDefaultAsync(d => d.Id == property.DivisionalSecretariatId.Value, cancellationToken);
+        }
+
+        GramaNiladhariDivision? gn = null;
+        if (property.GnDivisionId.HasValue)
+        {
+            gn = await _context.GramaNiladhariDivisions
+                .AsNoTracking()
+                .FirstOrDefaultAsync(g => g.Id == property.GnDivisionId.Value, cancellationToken);
+        }
+
+        Condominium? condo = null;
+        ApartmentType? aptType = null;
+        FurnishingType? furnishingType = null;
+        ViewType? viewType = null;
+
+        if (apt != null)
+        {
+            if (apt.CondominiumId.HasValue)
+            {
+                condo = await _context.Condominiums
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.Id == apt.CondominiumId.Value, cancellationToken);
+            }
+            if (apt.ApartmentTypeId.HasValue)
+            {
+                aptType = await _context.ApartmentTypes
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(at => at.Id == apt.ApartmentTypeId.Value, cancellationToken);
+            }
+            if (apt.FurnishingTypeId.HasValue)
+            {
+                furnishingType = await _context.FurnishingTypes
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(f => f.Id == apt.FurnishingTypeId.Value, cancellationToken);
+            }
+            if (apt.ViewTypeId.HasValue)
+            {
+                viewType = await _context.ViewTypes
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(v => v.Id == apt.ViewTypeId.Value, cancellationToken);
+            }
+        }
+
+        var financials = await _context.PropertyFinancials
+            .AsNoTracking()
+            .FirstOrDefaultAsync(pf => pf.PropertyId == propertyId, cancellationToken);
+
+        var legal = await _context.PropertyLegalDetails
+            .AsNoTracking()
+            .FirstOrDefaultAsync(pl => pl.PropertyId == propertyId, cancellationToken);
+
+        OwnershipType? ownership = null;
+        if (legal?.OwnershipType != null)
+        {
+            ownership = await _context.OwnershipTypes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(o => o.Id == legal.OwnershipType.Value, cancellationToken);
+        }
 
         var amenities = await (
             from pa in _context.PropertyAmenities
@@ -228,7 +298,47 @@ public sealed class AdminPropertyRepository : IAdminPropertyRepository
             Bathrooms = apt?.Bathrooms,
             FloorAreaSqFt = apt?.FloorAreaSqFt,
             Amenities = amenities,
-            Features = features
+            Features = features,
+
+            // Administrative divisions
+            DivisionalSecretariatId = property.DivisionalSecretariatId,
+            DivisionalSecretariatName = ds?.Name,
+            GnDivisionId = property.GnDivisionId,
+            GnDivisionName = gn?.Name,
+
+            // Condo & Apartment details
+            CondominiumId = apt?.CondominiumId,
+            CondominiumName = condo?.Name,
+            ApartmentTypeId = apt?.ApartmentTypeId,
+            ApartmentTypeName = aptType?.Name,
+            UnitNumber = apt?.UnitNumber,
+            FloorNumber = apt?.FloorNumber,
+            IsCornerUnit = apt?.IsCornerUnit ?? false,
+            MasterBedrooms = apt?.MasterBedrooms,
+            AttachedBathrooms = apt?.AttachedBathrooms,
+            Balconies = apt?.Balconies,
+            FurnishingTypeId = apt?.FurnishingTypeId,
+            FurnishingTypeName = furnishingType?.Name,
+            ViewTypeId = apt?.ViewTypeId,
+            ViewTypeName = viewType?.Name,
+            HasMaidRoom = apt?.HasMaidRoom ?? false,
+            HasMaidBathroom = apt?.HasMaidBathroom ?? false,
+
+            // Financials
+            MaintenanceFee = financials?.MaintenanceFee,
+            MaintenanceFeePeriod = financials?.MaintenanceFeePeriod,
+            SinkingFundAmount = financials?.SinkingFundAmount,
+            BillsUpToDate = financials?.BillsUpToDate,
+            HasOutstandingCharges = financials?.HasOutstandingCharges ?? false,
+            OutstandingAmount = financials?.OutstandingAmount,
+
+            // Legal
+            OwnershipTypeId = legal?.OwnershipType,
+            OwnershipTypeName = ownership?.Name,
+            HasMortgage = legal?.HasMortgage ?? false,
+            MortgageProvider = legal?.MortgageProvider,
+            HasLegalIssues = legal?.HasLegalIssues ?? false,
+            LegalIssueDescription = legal?.LegalIssueDescription
         };
     }
 

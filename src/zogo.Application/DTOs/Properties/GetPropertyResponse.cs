@@ -1,4 +1,4 @@
-﻿namespace zogo.Application.DTOs.Properties;
+namespace zogo.Application.DTOs.Properties;
 
 public sealed class GetPropertyResponse
 {
@@ -42,5 +42,8 @@ public sealed class GetPropertyResponse
 
     public Guid? UpdatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }
+
+    public string? AdminNotes { get; set; }
+    public string? RejectionReason { get; set; }
 }
 

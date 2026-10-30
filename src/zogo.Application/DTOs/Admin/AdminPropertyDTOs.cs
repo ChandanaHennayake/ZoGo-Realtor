@@ -66,6 +66,46 @@ public sealed class AdminPropertyReviewDetailsResponse
     public int? ParkingSpaces { get; set; }
     public IReadOnlyList<string> Amenities { get; set; } = [];
     public IReadOnlyList<string> Features { get; set; } = [];
+
+    // Administrative divisions
+    public int? DivisionalSecretariatId { get; set; }
+    public string? DivisionalSecretariatName { get; set; }
+    public int? GnDivisionId { get; set; }
+    public string? GnDivisionName { get; set; }
+
+    // Apartment & Condo details
+    public Guid? CondominiumId { get; set; }
+    public string? CondominiumName { get; set; }
+    public short? ApartmentTypeId { get; set; }
+    public string? ApartmentTypeName { get; set; }
+    public string? UnitNumber { get; set; }
+    public int? FloorNumber { get; set; }
+    public bool IsCornerUnit { get; set; }
+    public short? MasterBedrooms { get; set; }
+    public short? AttachedBathrooms { get; set; }
+    public short? Balconies { get; set; }
+    public short? FurnishingTypeId { get; set; }
+    public string? FurnishingTypeName { get; set; }
+    public short? ViewTypeId { get; set; }
+    public string? ViewTypeName { get; set; }
+    public bool HasMaidRoom { get; set; }
+    public bool HasMaidBathroom { get; set; }
+
+    // Financials
+    public decimal? MaintenanceFee { get; set; }
+    public short? MaintenanceFeePeriod { get; set; }
+    public decimal? SinkingFundAmount { get; set; }
+    public bool? BillsUpToDate { get; set; }
+    public bool HasOutstandingCharges { get; set; }
+    public decimal? OutstandingAmount { get; set; }
+
+    // Legal
+    public short? OwnershipTypeId { get; set; }
+    public string? OwnershipTypeName { get; set; }
+    public bool HasMortgage { get; set; }
+    public string? MortgageProvider { get; set; }
+    public bool HasLegalIssues { get; set; }
+    public string? LegalIssueDescription { get; set; }
 }
 
 public sealed class AdminPropertyMediaItem

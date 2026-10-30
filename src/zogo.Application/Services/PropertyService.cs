@@ -10,13 +10,19 @@ public sealed class PropertyService : IPropertyService
     private const short DraftStatus = 1;
 
     private readonly IPropertyRepository _propertyRepository;
+    private readonly IUserNotificationRepository _notificationRepository;
+    private readonly ISystemConfigurationRepository _systemConfigurationRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public PropertyService(
         IPropertyRepository propertyRepository,
+        IUserNotificationRepository notificationRepository,
+        ISystemConfigurationRepository systemConfigurationRepository,
         IUnitOfWork unitOfWork)
     {
         _propertyRepository = propertyRepository;
+        _notificationRepository = notificationRepository;
+        _systemConfigurationRepository = systemConfigurationRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -38,12 +44,8 @@ public sealed class PropertyService : IPropertyService
         // Validation
         // =========================================================
 
-        if (string.IsNullOrWhiteSpace(request.ReferenceNo))
-        {
-            throw new ArgumentException(
-                "Reference number is required.",
-                nameof(request.ReferenceNo));
-        }
+        // Always generate official reference number from DB sequence on save (+1 ID in DB)
+        request.ReferenceNo = await _systemConfigurationRepository.GenerateAndIncrementPropertyReferenceNoAsync(cancellationToken);
 
         if (string.IsNullOrWhiteSpace(request.Title))
         {
@@ -168,6 +170,23 @@ public sealed class PropertyService : IPropertyService
         if (property is null)
             return null;
 
+        string? adminNotes = null;
+        string? rejectionReason = null;
+        if (property.Status == 9 || property.Status == 10)
+        {
+            var note = await _notificationRepository.GetLatestByReferenceAsync(
+                property.Id.ToString(),
+                property.Status == 9 ? "CHANGES_REQUESTED" : "PROPERTY_REJECTED",
+                cancellationToken);
+            if (note != null)
+            {
+                if (property.Status == 9)
+                    adminNotes = note.Message;
+                else
+                    rejectionReason = note.Message;
+            }
+        }
+
         return new GetPropertyResponse
         {
             PropertyId = property.Id,
@@ -207,7 +226,10 @@ public sealed class PropertyService : IPropertyService
             CreatedAt = property.CreatedAt,
 
             UpdatedBy = property.UpdatedBy,
-            UpdatedAt = property.UpdatedAt
+            UpdatedAt = property.UpdatedAt,
+
+            AdminNotes = adminNotes,
+            RejectionReason = rejectionReason
         };
     }
 
@@ -223,6 +245,9 @@ public sealed class PropertyService : IPropertyService
         var properties = await _propertyRepository.GetByOwnerUserIdAsync(
             userId,
             cancellationToken);
+
+        var propertyIds = properties.Select(p => p.Id.ToString()).ToList();
+        var notesDict = await _notificationRepository.GetLatestNotesForReferencesAsync(propertyIds, cancellationToken);
 
         return properties
             .Select(property => new GetPropertyResponse
@@ -254,7 +279,7 @@ public sealed class PropertyService : IPropertyService
                 IsNegotiable = property.IsNegotiable,
 
                 Status = property.Status,
-            StatusName = ResolveStatusName(property.Status),
+                StatusName = ResolveStatusName(property.Status),
 
                 PublishedAt = property.PublishedAt,
                 SoldAt = property.SoldAt,
@@ -263,7 +288,10 @@ public sealed class PropertyService : IPropertyService
                 CreatedAt = property.CreatedAt,
 
                 UpdatedBy = property.UpdatedBy,
-                UpdatedAt = property.UpdatedAt
+                UpdatedAt = property.UpdatedAt,
+
+                AdminNotes = property.Status == 9 && notesDict.TryGetValue(property.Id.ToString(), out var note) ? note : null,
+                RejectionReason = property.Status == 10 && notesDict.TryGetValue(property.Id.ToString(), out var rej) ? rej : null
             })
             .ToList();
     }
@@ -304,6 +332,11 @@ public sealed class PropertyService : IPropertyService
         if (property.OwnerUserId != userId)
             throw new UnauthorizedAccessException(
                 "You are not authorized to submit this property.");
+
+        // Allow submission from Draft (1) or Changes Requested (9)
+        if (property.Status != 1 && property.Status != 9)
+            throw new InvalidOperationException(
+                "Only draft or change-requested properties can be submitted for review.");
 
         // Status 4 = PENDING_APPROVAL
         property.ChangeStatus(4, userId);
@@ -379,9 +412,10 @@ public sealed class PropertyService : IPropertyService
         if (property.OwnerUserId != userId)
             return false;
 
-        if (property.Status != 1)
+        // Allow updating for Draft (1) or Changes Requested (9)
+        if (property.Status != 1 && property.Status != 9)
             throw new InvalidOperationException(
-                "Only draft properties can be updated.");
+                "Only draft or change-requested properties can be updated.");
 
         property.Update(
             request.Title,
@@ -405,6 +439,11 @@ public sealed class PropertyService : IPropertyService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return true;
+    }
+
+    public async Task<string> GetNextReferenceNoAsync(CancellationToken cancellationToken = default)
+    {
+        return await _systemConfigurationRepository.PeekNextPropertyReferenceNoAsync(cancellationToken);
     }
 
     private static string ResolveStatusName(short status) => status switch

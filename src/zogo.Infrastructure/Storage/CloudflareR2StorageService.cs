@@ -1,4 +1,4 @@
-﻿using Amazon.S3;
+using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Configuration;
 using zogo.Application.Interfaces.Services;
@@ -64,32 +64,49 @@ public class CloudflareR2StorageService : IFileStorageService
                 "Stream must be readable.",
                 nameof(stream));
 
-        if (stream.CanSeek)
+        Stream uploadStream = stream;
+        MemoryStream? tempMs = null;
+
+        try
         {
-            stream.Position = 0;
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+            }
+            else
+            {
+                tempMs = new MemoryStream();
+                await stream.CopyToAsync(tempMs, cancellationToken);
+                tempMs.Position = 0;
+                uploadStream = tempMs;
+            }
+
+            var request = new PutObjectRequest
+            {
+                BucketName = _bucketName,
+                Key = storageKey,
+                InputStream = uploadStream,
+                ContentType = contentType,
+
+                // Important for Cloudflare R2:
+                UseChunkEncoding = false
+            };
+
+            if (uploadStream.CanSeek)
+            {
+                request.Headers.ContentLength = uploadStream.Length;
+            }
+
+            await _s3Client.PutObjectAsync(
+                request,
+                cancellationToken);
+
+            return storageKey;
         }
-
-        var request = new PutObjectRequest
+        finally
         {
-            BucketName = _bucketName,
-            Key = storageKey,
-            InputStream = stream,
-            ContentType = contentType,
-
-            // Important for Cloudflare R2:
-            UseChunkEncoding = false
-        };
-
-        if (stream.CanSeek)
-        {
-            request.Headers.ContentLength = stream.Length;
+            tempMs?.Dispose();
         }
-
-        await _s3Client.PutObjectAsync(
-            request,
-            cancellationToken);
-
-        return storageKey;
     }
 
     public async Task DeleteAsync(

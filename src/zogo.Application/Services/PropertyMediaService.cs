@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Property.PropertyMedia;
+using zogo.Application.DTOs.Property.PropertyMedia;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 using zogo.Domain.Entities.Property;
@@ -171,10 +171,10 @@ public class PropertyMediaService : IPropertyMediaService
 
 
     public async Task<(Stream Stream, string MimeType, string FileName)> DownloadAsync(
-    Guid userId,
-    Guid propertyId,
-    Guid mediaId,
-    CancellationToken cancellationToken = default)
+        Guid? userId,
+        Guid propertyId,
+        Guid mediaId,
+        CancellationToken cancellationToken = default)
     {
         var property = await _propertyRepository.GetByIdAsync(
             propertyId,
@@ -182,10 +182,6 @@ public class PropertyMediaService : IPropertyMediaService
 
         if (property is null || property.DeletedAt.HasValue)
             throw new KeyNotFoundException("Property not found.");
-
-        if (property.OwnerUserId != userId)
-            throw new UnauthorizedAccessException(
-                "You are not authorized to access this property.");
 
         var media = await _propertyMediaRepository.GetByIdAsync(
             mediaId,

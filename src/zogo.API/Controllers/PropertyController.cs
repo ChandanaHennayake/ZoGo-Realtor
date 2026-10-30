@@ -50,6 +50,14 @@ public sealed class PropertyController : ControllerBase
 
 
 
+    [HttpGet("next-reference-no")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetNextReferenceNo(CancellationToken cancellationToken)
+    {
+        var refNo = await _propertyService.GetNextReferenceNoAsync(cancellationToken);
+        return Ok(new { referenceNo = refNo });
+    }
+
     [HttpGet("{propertyId:guid}")]
     public async Task<IActionResult> GetById(
     Guid propertyId,

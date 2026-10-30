@@ -37,7 +37,21 @@ public class PropertyDocumentController : ControllerBase
         if (request.DocumentTypeId <= 0)
             return BadRequest("Document type ID is required.");
 
-        var extension = Path.GetExtension(request.File.FileName);
+        var extension = Path.GetExtension(request.File.FileName).ToLowerInvariant();
+        var contentType = request.File.ContentType;
+        if (string.IsNullOrWhiteSpace(contentType) || contentType == "application/octet-stream")
+        {
+            contentType = extension switch
+            {
+                ".pdf" => "application/pdf",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".doc" => "application/msword",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                _ => "application/pdf"
+            };
+        }
+
         var documentId = Guid.NewGuid();
         var storageKey = $"properties/{propertyId}/documents/{documentId:N}{extension}";
 
@@ -48,7 +62,7 @@ public class PropertyDocumentController : ControllerBase
             await _fileStorageService.UploadAsync(
                 stream,
                 storageKey,
-                request.File.ContentType,
+                contentType,
                 cancellationToken);
 
             var createRequest = new CreatePropertyDocumentRequest
@@ -56,7 +70,7 @@ public class PropertyDocumentController : ControllerBase
                 DocumentTypeId = request.DocumentTypeId,
                 StorageKey = storageKey,
                 OriginalFileName = request.File.FileName,
-                MimeType = request.File.ContentType,
+                MimeType = contentType,
                 FileSizeBytes = request.File.Length
             };
 
@@ -158,6 +172,7 @@ public class PropertyDocumentController : ControllerBase
     }
 
     [HttpPatch("{documentId:guid}/status")]
+    [Authorize(Roles = "AGT,ADM,Admin")]
     public async Task<IActionResult> UpdateStatus(
         Guid propertyId,
         Guid documentId,
