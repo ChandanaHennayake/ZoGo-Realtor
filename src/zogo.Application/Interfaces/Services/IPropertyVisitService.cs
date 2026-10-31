@@ -45,4 +45,10 @@ public interface IPropertyVisitService
         CancelVisitRequest request,
         Guid cancelledByUserId,
         CancellationToken cancellationToken = default);
+
+    Task<VisitResponse> RejectVisitAsync(
+        Guid visitId,
+        RejectVisitRequest request,
+        Guid rejectedByUserId,
+        CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using zogo.Application.Common;
 using zogo.Application.DTOs.Buyer;
@@ -81,5 +81,22 @@ public sealed class BuyerPropertyController : ControllerBase
         }
 
         return Ok(ApiResponse<BuyerPropertyDetailsResponse>.Ok(details));
+    }
+
+    [HttpGet("{propertyId:guid}/agent")]
+    public async Task<IActionResult> GetPropertyAgent(
+        Guid propertyId,
+        CancellationToken cancellationToken = default)
+    {
+        var agent = await _buyerPropertyService.GetPropertyAgentAsync(
+            propertyId,
+            cancellationToken);
+
+        if (agent is null)
+        {
+            return NotFound(ApiResponse.Fail("No active agent assigned for this property's district."));
+        }
+
+        return Ok(ApiResponse<PropertyAgentResponse>.Ok(agent));
     }
 }

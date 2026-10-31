@@ -10,5 +10,8 @@ public enum BuyerPropertyInteractionStatus : short
     OfferSubmitted = 6,
     OfferAccepted = 7,
     OfferRejected = 8,
-    NotInterested = 9
+    NotInterested = 9,
+    Sold = 10,
+    Cancelled = 11,
+    Rejected = 12
 }

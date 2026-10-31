@@ -1,4 +1,4 @@
-﻿namespace zogo.Application.DTOs.Buyer;
+namespace zogo.Application.DTOs.Buyer;
 
 public sealed class BuyerPropertyResponse
 {
@@ -47,4 +47,8 @@ public sealed class BuyerPropertyResponse
 
     public DateTime? PublishedAt { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public Guid? AgentUserId { get; set; }
+    public string? AgentName { get; set; }
+    public string? AgentPhoneNumber { get; set; }
 }

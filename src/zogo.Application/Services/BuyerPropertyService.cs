@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Buyer;
+using zogo.Application.DTOs.Buyer;
 using zogo.Application.Interfaces.Repositories;
 using zogo.Application.Interfaces.Services;
 
@@ -35,6 +35,18 @@ public sealed class BuyerPropertyService : IBuyerPropertyService
         return await _buyerPropertyRepository.GetPublishedPropertyDetailsAsync(
             propertyId,
             userId,
+            cancellationToken);
+    }
+
+    public async Task<PropertyAgentResponse?> GetPropertyAgentAsync(
+        Guid propertyId,
+        CancellationToken cancellationToken = default)
+    {
+        if (propertyId == Guid.Empty)
+            throw new ArgumentException("Property ID is required.", nameof(propertyId));
+
+        return await _buyerPropertyRepository.GetPropertyAgentAsync(
+            propertyId,
             cancellationToken);
     }
 }

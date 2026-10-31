@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Property.PropertyMedia;
+using zogo.Application.DTOs.Property.PropertyMedia;
 
 namespace zogo.Application.DTOs.Buyer;
 
@@ -46,6 +46,10 @@ public sealed class BuyerPropertyDetailsResponse
 
     public DateTime? PublishedAt { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public Guid? AgentUserId { get; set; }
+    public string? AgentName { get; set; }
+    public string? AgentPhoneNumber { get; set; }
 
     public List<PropertyMediaResponse> Media { get; set; } = new();
     public List<BuyerFeatureItem> Features { get; set; } = new();

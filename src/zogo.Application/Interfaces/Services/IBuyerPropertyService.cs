@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Buyer;
+using zogo.Application.DTOs.Buyer;
 
 namespace zogo.Application.Interfaces.Services;
 
@@ -12,5 +12,9 @@ public interface IBuyerPropertyService
     Task<BuyerPropertyDetailsResponse?> GetPropertyDetailsAsync(
         Guid propertyId,
         Guid? userId,
+        CancellationToken cancellationToken = default);
+
+    Task<PropertyAgentResponse?> GetPropertyAgentAsync(
+        Guid propertyId,
         CancellationToken cancellationToken = default);
 }

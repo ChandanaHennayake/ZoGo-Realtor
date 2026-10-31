@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using zogo.Application.DTOs.Buyer;
 using zogo.Application.DTOs.Property.PropertyMedia;
 using zogo.Application.Interfaces.Repositories;
@@ -106,6 +106,14 @@ public sealed class BuyerPropertyRepository : IBuyerPropertyRepository
             .AsNoTracking()
             .ToDictionaryAsync(lt => lt.Id, lt => lt.Name, cancellationToken);
 
+        var distinctDistrictIds = properties.Select(p => p.DistrictId).Distinct().ToList();
+        var districtAgents = await _context.AgentProfiles
+            .AsNoTracking()
+            .Include(a => a.User)
+            .Include(a => a.AgentDistricts)
+            .Where(a => a.IsActive && a.AgentDistricts.Any(ad => distinctDistrictIds.Contains(ad.DistrictId)))
+            .ToListAsync(cancellationToken);
+
         var favoritePropertyIds = new HashSet<Guid>();
         if (userId.HasValue && userId.Value != Guid.Empty)
         {
@@ -128,6 +136,11 @@ public sealed class BuyerPropertyRepository : IBuyerPropertyRepository
             var coverUrl = cover != null
                 ? $"/api/v1/properties/{p.Id}/media/{cover.Id}/download"
                 : null;
+
+            var agent = districtAgents.FirstOrDefault(a => a.AgentDistricts.Any(ad => ad.DistrictId == p.DistrictId));
+            var agentName = agent?.User != null ? $"{agent.User.FirstName} {agent.User.LastName}".Trim() : null;
+            var agentPhone = agent?.User?.PhoneNumber;
+            var agentUserId = agent?.User?.Id;
 
             results.Add(new BuyerPropertyResponse
             {
@@ -162,7 +175,10 @@ public sealed class BuyerPropertyRepository : IBuyerPropertyRepository
                 StatusName = "Published",
                 IsFavorite = favoritePropertyIds.Contains(p.Id),
                 PublishedAt = p.PublishedAt,
-                CreatedAt = p.CreatedAt
+                CreatedAt = p.CreatedAt,
+                AgentUserId = agentUserId,
+                AgentName = agentName,
+                AgentPhoneNumber = agentPhone
             });
         }
 
@@ -235,6 +251,23 @@ public sealed class BuyerPropertyRepository : IBuyerPropertyRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(lt => lt.Id == p.ListingTypeId, cancellationToken);
 
+        var assignedAgent = await _context.AgentProfiles
+            .AsNoTracking()
+            .Include(a => a.User)
+            .Where(a => a.IsActive && a.AgentDistricts.Any(ad => ad.DistrictId == p.DistrictId))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        string? agentName = null;
+        string? agentPhone = null;
+        Guid? agentUserId = null;
+
+        if (assignedAgent?.User != null)
+        {
+            agentName = $"{assignedAgent.User.FirstName} {assignedAgent.User.LastName}".Trim();
+            agentPhone = assignedAgent.User.PhoneNumber;
+            agentUserId = assignedAgent.User.Id;
+        }
+
         var isFavorite = false;
         if (userId.HasValue && userId.Value != Guid.Empty)
         {
@@ -275,6 +308,9 @@ public sealed class BuyerPropertyRepository : IBuyerPropertyRepository
             IsFavorite = isFavorite,
             PublishedAt = p.PublishedAt,
             CreatedAt = p.CreatedAt,
+            AgentUserId = agentUserId,
+            AgentName = agentName,
+            AgentPhoneNumber = agentPhone,
             Media = media.Select(m => new PropertyMediaResponse
             {
                 Id = m.Id,
@@ -321,6 +357,48 @@ public sealed class BuyerPropertyRepository : IBuyerPropertyRepository
                 LegalIssueDescription = legal.LegalIssueDescription,
                 LegalVerified = legal.LegalVerified
             }
+        };
+    }
+
+    public async Task<PropertyAgentResponse?> GetPropertyAgentAsync(
+        Guid propertyId,
+        CancellationToken cancellationToken = default)
+    {
+        var p = await _context.Properties
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                x => x.Id == propertyId && x.DeletedAt == null,
+                cancellationToken);
+
+        if (p is null)
+        {
+            return null;
+        }
+
+        var assignedAgent = await _context.AgentProfiles
+            .AsNoTracking()
+            .Include(a => a.User)
+            .Where(a => a.IsActive && a.AgentDistricts.Any(ad => ad.DistrictId == p.DistrictId))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (assignedAgent is null || assignedAgent.User is null)
+        {
+            return null;
+        }
+
+        var district = await _context.Districts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(d => d.Id == p.DistrictId, cancellationToken);
+
+        return new PropertyAgentResponse
+        {
+            AgentId = assignedAgent.Id,
+            UserId = assignedAgent.User.Id,
+            Name = $"{assignedAgent.User.FirstName} {assignedAgent.User.LastName}".Trim(),
+            PhoneNumber = assignedAgent.User.PhoneNumber,
+            Email = assignedAgent.User.Email,
+            DistrictId = p.DistrictId,
+            DistrictName = district?.Name
         };
     }
 }

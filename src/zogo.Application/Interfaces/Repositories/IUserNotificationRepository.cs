@@ -9,4 +9,6 @@ public interface IUserNotificationRepository
     Task<int> GetUnreadCountAsync(Guid userId, CancellationToken cancellationToken = default);
     Task AddAsync(UserNotification notification, CancellationToken cancellationToken = default);
     Task MarkAllAsReadAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<UserNotification?> GetLatestByReferenceAsync(string referenceId, string? notificationType = null, CancellationToken cancellationToken = default);
+    Task<IReadOnlyDictionary<string, string>> GetLatestNotesForReferencesAsync(IEnumerable<string> referenceIds, CancellationToken cancellationToken = default);
 }

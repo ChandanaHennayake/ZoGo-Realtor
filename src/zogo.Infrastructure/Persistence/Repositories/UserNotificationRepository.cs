@@ -55,4 +55,50 @@ public class UserNotificationRepository : IUserNotificationRepository
             item.MarkAsRead();
         }
     }
+
+    public async Task<UserNotification?> GetLatestByReferenceAsync(
+        string referenceId,
+        string? notificationType = null,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _context.UserNotifications
+            .AsNoTracking()
+            .Where(n => n.ReferenceId == referenceId);
+
+        if (!string.IsNullOrWhiteSpace(notificationType))
+        {
+            query = query.Where(n => n.Type == notificationType.Trim().ToUpperInvariant());
+        }
+
+        return await query
+            .OrderByDescending(n => n.CreatedAt)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyDictionary<string, string>> GetLatestNotesForReferencesAsync(
+        IEnumerable<string> referenceIds,
+        CancellationToken cancellationToken = default)
+    {
+        var refList = referenceIds.Where(r => !string.IsNullOrWhiteSpace(r)).Distinct().ToList();
+        if (refList.Count == 0)
+            return new Dictionary<string, string>();
+
+        var notifications = await _context.UserNotifications
+            .AsNoTracking()
+            .Where(n => n.ReferenceId != null && refList.Contains(n.ReferenceId) &&
+                        (n.Type == "CHANGES_REQUESTED" || n.Type == "PROPERTY_REJECTED"))
+            .OrderByDescending(n => n.CreatedAt)
+            .ToListAsync(cancellationToken);
+
+        var dict = new Dictionary<string, string>();
+        foreach (var n in notifications)
+        {
+            if (n.ReferenceId != null && !dict.ContainsKey(n.ReferenceId))
+            {
+                dict[n.ReferenceId] = n.Message;
+            }
+        }
+
+        return dict;
+    }
 }

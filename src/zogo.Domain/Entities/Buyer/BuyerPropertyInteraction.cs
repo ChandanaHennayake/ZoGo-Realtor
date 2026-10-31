@@ -49,7 +49,7 @@ public class BuyerPropertyInteraction
         if (!Enum.IsDefined(typeof(BuyerPropertyInteractionStatus), currentStatus))
         {
             throw new ArgumentException(
-                $"Invalid buyer property interaction status: {currentStatus}. Allowed values are 1 to 9.",
+                $"Invalid buyer property interaction status: {currentStatus}. Allowed values are 1 to 12.",
                 nameof(currentStatus));
         }
     }

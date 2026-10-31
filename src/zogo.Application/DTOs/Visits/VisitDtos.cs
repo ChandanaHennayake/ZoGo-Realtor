@@ -24,6 +24,11 @@ public sealed class CancelVisitRequest
     public string? Reason { get; set; }
 }
 
+public sealed class RejectVisitRequest
+{
+    public string? Reason { get; set; }
+}
+
 public sealed class VisitResponse
 {
     public Guid VisitId { get; set; }

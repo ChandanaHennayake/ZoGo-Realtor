@@ -182,6 +182,30 @@ public sealed class PropertyVisitService : IPropertyVisitService
         return MapSingle(visit);
     }
 
+    public async Task<VisitResponse> RejectVisitAsync(
+        Guid visitId,
+        RejectVisitRequest request,
+        Guid rejectedByUserId,
+        CancellationToken cancellationToken = default)
+    {
+        var visit = await _visitRepository.GetByIdAsync(visitId, cancellationToken);
+        if (visit == null || visit.DeletedAt.HasValue)
+            throw new NotFoundException("PropertyVisit", visitId);
+
+        visit.Reject(request.Reason);
+
+        // If interaction was VisitRequested, revert to Interested
+        var interaction = await _interactionRepository.GetAsync(visit.BuyerId, visit.PropertyId, cancellationToken);
+        if (interaction != null && interaction.CurrentStatus == (short)BuyerPropertyInteractionStatus.VisitRequested)
+        {
+            interaction.UpdateCurrentStatus((short)BuyerPropertyInteractionStatus.Interested);
+        }
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return MapSingle(visit);
+    }
+
     private static VisitResponse MapSingle(PropertyVisit v)
     {
         return new VisitResponse

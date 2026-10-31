@@ -161,6 +161,32 @@ public sealed class PropertyVisitController : ControllerBase
         }
     }
 
+    [HttpPut("{visitId:guid}/reject")]
+    [Authorize(Roles = "AGT,SEL,ADM,Admin")]
+    public async Task<IActionResult> RejectVisit(
+        Guid visitId,
+        [FromBody] RejectVisitRequest request,
+        CancellationToken cancellationToken)
+    {
+        var userId = GetUserId();
+        if (userId is null)
+            return Unauthorized();
+
+        try
+        {
+            var result = await _visitService.RejectVisitAsync(visitId, request, userId.Value, cancellationToken);
+            return Ok(ApiResponse<VisitResponse>.Ok(result, "Visit rejected."));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ApiResponse.Fail(ex.Message));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse.Fail(ex.Message));
+        }
+    }
+
     private Guid? GetUserId()
     {
         var userIdClaim =
