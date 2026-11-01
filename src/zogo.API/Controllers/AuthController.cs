@@ -56,6 +56,10 @@ public sealed class AuthController : ControllerBase
         {
             return Unauthorized(new { message = ex.Message });
         }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
 

@@ -153,7 +153,7 @@ public sealed class AuthenticationService : IAuthenticationService
         if (user is null)
         {
             throw new UnauthorizedAccessException(
-                "Invalid email or password.");
+                "No account found with this email address. Please check your email or register.");
         }
 
         // 2. Check user status
@@ -172,7 +172,7 @@ public sealed class AuthenticationService : IAuthenticationService
         if (localProvider is null)
         {
             throw new UnauthorizedAccessException(
-                "This account does not have local password authentication.");
+                "This account was registered using Google Sign-In. Please sign in with Google.");
         }
 
         // 4. Check password hash
@@ -191,7 +191,7 @@ public sealed class AuthenticationService : IAuthenticationService
         if (!passwordValid)
         {
             throw new UnauthorizedAccessException(
-                "Invalid email or password.");
+                "Incorrect password. Please verify and try again.");
         }
 
         // 6. Get user roles
