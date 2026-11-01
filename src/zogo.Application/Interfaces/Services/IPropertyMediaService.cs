@@ -1,4 +1,4 @@
-﻿using zogo.Application.DTOs.Property.PropertyMedia;
+using zogo.Application.DTOs.Property.PropertyMedia;
 
 namespace zogo.Application.Interfaces.Services;
 
@@ -23,10 +23,10 @@ public interface IPropertyMediaService
 
 
     Task<(Stream Stream, string MimeType, string FileName)> DownloadAsync(
-    Guid userId,
-    Guid propertyId,
-    Guid mediaId,
-    CancellationToken cancellationToken = default);
+        Guid? userId,
+        Guid propertyId,
+        Guid mediaId,
+        CancellationToken cancellationToken = default);
 
 
 }

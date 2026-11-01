@@ -29,4 +29,6 @@ public interface IPropertyService
     Guid propertyId,
     UpdatePropertyRequest request,
     CancellationToken cancellationToken = default);
+
+    Task<string> GetNextReferenceNoAsync(CancellationToken cancellationToken = default);
 }
